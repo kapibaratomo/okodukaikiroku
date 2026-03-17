@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お小遣い記録</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>お小遣い記録</h1>
+            <div class="balance-cards">
+                <div class="card total">
+                    <span class="label">総残高</span>
+                    <span class="amount" id="totalBalance">¥0</span>
+                </div>
+                <div class="card-group">
+                    <div class="card pasmo">
+                        <span class="label">PASMO</span>
+                        <span class="amount" id="pasmoBalance">¥0</span>
+                    </div>
+                    <div class="card cash">
+                        <span class="label">現金</span>
+                        <span class="amount" id="cashBalance">¥0</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="add-transaction">
+            <h2>記録を追加</h2>
+            <form id="transactionForm">
+                <div class="form-group toggle-group">
+                    <input type="radio" id="typePasmo" name="type" value="pasmo" checked>
+                    <label for="typePasmo" class="toggle-btn toggle-pasmo">PASMO</label>
+                    
+                    <input type="radio" id="typeCash" name="type" value="cash">
+                    <label for="typeCash" class="toggle-btn toggle-cash">現金</label>
+                </div>
+                
+                <div class="form-group toggle-group">
+                    <input type="radio" id="catIncome" name="category" value="income">
+                    <label for="catIncome" class="toggle-btn toggle-income">収入 (+)</label>
+                    
+                    <input type="radio" id="catExpense" name="category" value="expense" checked>
+                    <label for="catExpense" class="toggle-btn toggle-expense">支出 (-)</label>
+                </div>
+
+                <div class="form-group">
+                    <input type="number" id="amount" placeholder="金額 (円)" required min="1">
+                </div>
+
+                <div class="form-group">
+                    <input type="text" id="memo" placeholder="メモ (例: ジュース)" required>
+                </div>
+
+                <button type="submit" class="btn-submit">追加する</button>
+            </form>
+        </section>
+
+        <section class="history">
+            <div class="history-header">
+                <h2>履歴</h2>
+                <div class="filter-group">
+                    <button class="filter-btn active" data-filter="all">すべて</button>
+                    <button class="filter-btn" data-filter="pasmo">PASMO</button>
+                    <button class="filter-btn" data-filter="cash">現金</button>
+                </div>
+            </div>
+            
+            <ul id="historyList" class="history-list">
+                <!-- 履歴がここに追加されます -->
+            </ul>
+        </section>
+
+        <section class="data-management">
+            <h2>データ管理</h2>
+            <p class="help-text">他のPCと履歴を共有する場合に使います</p>
+            <div class="data-actions">
+                <button id="exportBtn" class="btn-outline">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    エクスポート
+                </button>
+                <label class="btn-outline cursor-pointer" for="importFile">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    インポート
+                </label>
+                <input type="file" id="importFile" accept=".json" style="display: none;">
+            </div>
+        </section>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
