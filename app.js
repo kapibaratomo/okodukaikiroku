@@ -1,5 +1,7 @@
 // State management
 let transactions = [];
+let githubSha = null; // To keep track of the file SHA for updates
+let githubToken = localStorage.getItem('okodukai_github_token') || '';
 
 // DOM Elements
 const totalBalanceEl = document.getElementById('totalBalance');
@@ -8,13 +10,39 @@ const cashBalanceEl = document.getElementById('cashBalance');
 const form = document.getElementById('transactionForm');
 const historyList = document.getElementById('historyList');
 const filterBtns = document.querySelectorAll('.filter-btn');
-const exportBtn = document.getElementById('exportBtn');
-const importFile = document.getElementById('importFile');
+
+// New DOM Elements for GitHub Sync
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsSection = document.getElementById('settingsSection');
+const tokenInput = document.getElementById('githubToken');
+const saveTokenBtn = document.getElementById('saveTokenBtn');
+const syncStatus = document.getElementById('syncStatus');
+const loadingOverlay = document.getElementById('loadingOverlay');
 
 // Initialize
-function init() {
-    loadData();
+async function init() {
+    if (githubToken) {
+        tokenInput.value = githubToken;
+        await loadDataFromGitHub();
+    } else {
+        // Tokenがない場合は設定画面を開く
+        settingsSection.classList.remove('hidden');
+        loadDataFromLocalFallback();
+    }
     updateUI('all');
+}
+
+// Show loading
+function showLoading(show) {
+    if(show) loadingOverlay.classList.remove('hidden');
+    else loadingOverlay.classList.add('hidden');
+}
+
+// Show sync status
+function showSyncStatus(message, isError = false) {
+    syncStatus.textContent = message;
+    syncStatus.className = `sync-status text-sm mt-3 text-center ${isError ? 'text-error' : 'text-success'}`;
+    setTimeout(() => { syncStatus.textContent = ''; }, 3000);
 }
 
 // Generate UUID for transactions
@@ -33,30 +61,105 @@ function formatDate(timestamp) {
     return `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
 }
 
-// Load data from localStorage
-function loadData() {
-    const saved = localStorage.getItem('okodukai_data');
+// GitHub API Helper
+async function githubRequest(method, body = null) {
+    if (!githubToken) throw new Error('Token is missing');
+    
+    const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
+    const headers = {
+        'Accept': 'application/vnd.github.v3+json',
+        'Authorization': `token ${githubToken}`
+    };
+    
+    const options = { method, headers };
+    if (body) options.body = JSON.stringify(body);
+    
+    const res = await fetch(url, options);
+    const data = await res.json();
+    
+    if (!res.ok) throw new Error(data.message || 'API Error');
+    return data;
+}
+
+// Load data from GitHub
+async function loadDataFromGitHub() {
+    showLoading(true);
+    try {
+        const data = await githubRequest('GET');
+        githubSha = data.sha;
+        
+        // base64 decode (handles utf-8 properly)
+        const content = decodeURIComponent(escape(atob(data.content)));
+        const parsed = JSON.parse(content);
+        transactions = parsed.transactions || [];
+        
+        // Backup to local
+        localStorage.setItem('okodukai_data_backup', JSON.stringify({ transactions }));
+        
+    } catch (e) {
+        console.error('GitHub Load Error:', e);
+        if (e.message.includes('Not Found')) {
+            // File doesn't exist yet, we will create it on first save
+            transactions = [];
+        } else {
+            showSyncStatus('同期に失敗しました（ローカルデータを使用します）', true);
+            loadDataFromLocalFallback();
+        }
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Save data to GitHub
+async function saveDataToGitHub() {
+    if (!githubToken) {
+        alert('設定からGitHub Tokenを入力してください');
+        settingsSection.classList.remove('hidden');
+        return false;
+    }
+    
+    showLoading(true);
+    try {
+        const contentStr = JSON.stringify({ transactions }, null, 2);
+        // base64 encode (handles utf-8 properly)
+        const encodedContent = btoa(unescape(encodeURIComponent(contentStr)));
+        
+        const body = {
+            message: `Update transactions.json (${new Date().toLocaleString()})`,
+            content: encodedContent,
+            sha: githubSha // required for updating existing files
+        };
+        
+        const data = await githubRequest('PUT', body);
+        githubSha = data.content.sha; // update SHA for next time
+        
+        // Backup
+        localStorage.setItem('okodukai_data_backup', JSON.stringify({ transactions }));
+        return true;
+        
+    } catch (e) {
+        console.error('GitHub Save Error:', e);
+        showSyncStatus('保存に失敗しました: ' + e.message, true);
+        return false;
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Fallback load
+function loadDataFromLocalFallback() {
+    const saved = localStorage.getItem('okodukai_data_backup');
     if (saved) {
         try {
-            const data = JSON.parse(saved);
-            transactions = data.transactions || [];
+            transactions = JSON.parse(saved).transactions || [];
         } catch (e) {
-            console.error('Failed to load data', e);
             transactions = [];
         }
     }
 }
 
-// Save data to localStorage
-function saveData() {
-    localStorage.setItem('okodukai_data', JSON.stringify({
-        updatedAt: Date.now(),
-        transactions
-    }));
-}
-
 // Add transaction
-form.addEventListener('submit', (e) => {
+form.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const type = document.querySelector('input[name="type"]:checked').value;
@@ -76,21 +179,35 @@ form.addEventListener('submit', (e) => {
     };
 
     transactions.unshift(transaction); // Add to beginning
-    saveData();
     
-    // Reset form
-    document.getElementById('amount').value = '';
-    document.getElementById('memo').value = '';
-    
-    updateUI(document.querySelector('.filter-btn.active').dataset.filter);
+    const success = await saveDataToGitHub();
+    if (success) {
+        // Reset form
+        document.getElementById('amount').value = '';
+        document.getElementById('memo').value = '';
+        updateUI(document.querySelector('.filter-btn.active').dataset.filter);
+    } else {
+        // Rollback on fail
+        transactions.shift();
+    }
 });
 
 // Delete transaction
-function deleteTransaction(id) {
+async function deleteTransaction(id) {
     if (confirm('この記録を削除しますか？')) {
-        transactions = transactions.filter(t => t.id !== id);
-        saveData();
-        updateUI(document.querySelector('.filter-btn.active').dataset.filter);
+        const index = transactions.findIndex(t => t.id === id);
+        if (index === -1) return;
+        
+        const deleted = transactions[index];
+        transactions.splice(index, 1);
+        
+        const success = await saveDataToGitHub();
+        if (success) {
+            updateUI(document.querySelector('.filter-btn.active').dataset.filter);
+        } else {
+            // Rollback
+            transactions.splice(index, 0, deleted);
+        }
     }
 }
 
@@ -170,55 +287,25 @@ function updateUI(filterType) {
     renderHistory(filterType);
 }
 
-// Export data
-exportBtn.addEventListener('click', () => {
-    const dataStr = JSON.stringify({ transactions }, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    
-    const a = document.createElement('a');
-    const dateStr = new Date().toISOString().split('T')[0];
-    a.href = url;
-    a.download = `okodukai_backup_${dateStr}.json`;
-    document.body.appendChild(a);
-    a.click();
-    
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+// Settings Toggle
+settingsBtn.addEventListener('click', () => {
+    settingsSection.classList.toggle('hidden');
 });
 
-// Import data
-importFile.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-        try {
-            const data = JSON.parse(event.target.result);
-            if (data && Array.isArray(data.transactions)) {
-                if (confirm('インポートすると現在のデータと結合されます。よろしいですか？')) {
-                    // Merge and sort by newest
-                    const existingIds = new Set(transactions.map(t => t.id));
-                    const newTransactions = data.transactions.filter(t => !existingIds.has(t.id));
-                    
-                    transactions = [...transactions, ...newTransactions]
-                        .sort((a, b) => b.createdAt - a.createdAt);
-                    
-                    saveData();
-                    updateUI(document.querySelector('.filter-btn.active').dataset.filter);
-                    alert(`${newTransactions.length}件の履歴をインポートしました！`);
-                }
-            } else {
-                alert('無効なファイル形式です。');
-            }
-        } catch (err) {
-            alert('ファイルの読み込みに失敗しました。');
-            console.error(err);
-        }
-    };
-    reader.readAsText(file);
-    e.target.value = ''; // Reset
+// Save Token and Sync
+saveTokenBtn.addEventListener('click', async () => {
+    const token = tokenInput.value.trim();
+    if (!token) {
+        showSyncStatus('Tokenを入力してください', true);
+        return;
+    }
+    
+    githubToken = token;
+    localStorage.setItem('okodukai_github_token', token);
+    
+    await loadDataFromGitHub();
+    updateUI(document.querySelector('.filter-btn.active').dataset.filter);
+    showSyncStatus('同期が完了しました');
 });
 
 // Start app

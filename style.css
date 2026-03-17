@@ -45,11 +45,35 @@ header {
   margin-bottom: 32px;
 }
 
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
 h1 {
   font-size: 24px;
   font-weight: 700;
-  margin-bottom: 24px;
-  text-align: center;
+  margin: 0;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn:hover {
+  background: var(--border-color);
+  color: var(--primary-color);
 }
 
 h2 {
@@ -340,4 +364,59 @@ input[type="radio"]:checked + .toggle-expense {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+/* Utils */
+.hidden {
+  display: none !important;
+}
+
+.mt-3 {
+  margin-top: 12px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-sm {
+  font-size: 14px;
+}
+
+.text-error { color: var(--expense-color); }
+.text-success { color: var(--cash-color); }
+
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.loading-overlay p {
+  margin-top: 16px;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border-color);
+  border-top-color: var(--pasmo-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

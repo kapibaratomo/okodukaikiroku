@@ -7,9 +7,19 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <p>同期中...</p>
+    </div>
+
     <div class="container">
         <header>
-            <h1>お小遣い記録</h1>
+            <div class="header-top">
+                <h1>お小遣い記録</h1>
+                <button id="settingsBtn" class="icon-btn" title="設定">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                </button>
+            </div>
             <div class="balance-cards">
                 <div class="card total">
                     <span class="label">総残高</span>
@@ -74,22 +84,23 @@
             </ul>
         </section>
 
-        <section class="data-management">
-            <h2>データ管理</h2>
-            <p class="help-text">他のPCと履歴を共有する場合に使います</p>
+        <section id="settingsSection" class="data-management hidden">
+            <h2>GitHub同期設定</h2>
+            <p class="help-text">自動同期のためにはPersonal Access Tokenが必要です。</p>
+            <div class="form-group">
+                <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxxxxxxx">
+            </div>
             <div class="data-actions">
-                <button id="exportBtn" class="btn-outline">
-                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                    エクスポート
+                <button id="saveTokenBtn" class="btn-outline">
+                    設定を保存して同期
                 </button>
-                <label class="btn-outline cursor-pointer" for="importFile">
-                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                    インポート
-                </label>
-                <input type="file" id="importFile" accept=".json" style="display: none;">
+            </div>
+            <div id="syncStatus" class="sync-status text-sm mt-3 text-center">
+                <!-- ステータスメッセージ -->
             </div>
         </section>
     </div>
+    <script src="config.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
