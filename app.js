@@ -4,7 +4,6 @@ let githubSha = null; // To keep track of the file SHA for updates
 let githubToken = localStorage.getItem('okodukai_github_token') || '';
 
 // DOM Elements
-const totalBalanceEl = document.getElementById('totalBalance');
 const pasmoBalanceEl = document.getElementById('pasmoBalance');
 const cashBalanceEl = document.getElementById('cashBalance');
 const form = document.getElementById('transactionForm');
@@ -225,7 +224,6 @@ function calculateBalances() {
         }
     });
 
-    totalBalanceEl.textContent = formatCurrency(pasmo + cash);
     pasmoBalanceEl.textContent = formatCurrency(pasmo);
     cashBalanceEl.textContent = formatCurrency(cash);
 }
