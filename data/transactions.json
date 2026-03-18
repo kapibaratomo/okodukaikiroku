@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "ajmrevxdk",
+      "type": "pasmo",
+      "category": "income",
+      "amount": 212,
+      "memo": "もともと",
+      "createdAt": 1773793872502
+    },
+    {
       "id": "5o1urmt3n",
       "type": "cash",
       "category": "income",
