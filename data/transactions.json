@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "5o1urmt3n",
+      "type": "cash",
+      "category": "income",
+      "amount": 7077,
+      "memo": "2025年12月~2026年3月 お小遣い",
+      "createdAt": 1773793830200
+    },
+    {
       "id": "se6ft58m1",
       "type": "cash",
       "category": "income",
