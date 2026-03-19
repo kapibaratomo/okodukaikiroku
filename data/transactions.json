@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "jm7fhibwv",
+      "type": "cash",
+      "category": "expense",
+      "amount": 5340,
+      "memo": "ネトフリ 6か月",
+      "createdAt": 1773894822731
+    },
+    {
       "id": "0vnwtoacu",
       "type": "cash",
       "category": "expense",
