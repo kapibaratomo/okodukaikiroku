@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "0vnwtoacu",
+      "type": "cash",
+      "category": "expense",
+      "amount": 150,
+      "memo": "秋月 フラットケーブル",
+      "createdAt": 1773894774732
+    },
+    {
       "id": "ajmrevxdk",
       "type": "pasmo",
       "category": "income",
