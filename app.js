@@ -21,9 +21,11 @@ const loadingOverlay = document.getElementById('loadingOverlay');
 
 // Initialize
 async function init() {
-    // Set today's date as default
-    const today = new Date();
-    dateInput.value = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+    // Set today's date and time as default for datetime-local
+    const now = new Date();
+    const tzOffset = now.getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(now - tzOffset)).toISOString().slice(0, 16);
+    dateInput.value = localISOTime;
 
     if (githubToken) {
         tokenInput.value = githubToken;
@@ -59,10 +61,15 @@ function formatCurrency(amount) {
     return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(amount);
 }
 
-// Format date
-function formatDate(timestamp) {
+// Format date and time
+function formatDateTime(timestamp) {
     const date = new Date(timestamp);
-    return `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const hh = String(date.getHours()).padStart(2, '0');
+    const mm = String(date.getMinutes()).padStart(2, '0');
+    return `${y}/${m}/${d} ${hh}:${mm}`;
 }
 
 // GitHub API Helper
@@ -158,6 +165,7 @@ function loadDataFromLocalFallback() {
     if (saved) {
         try {
             transactions = JSON.parse(saved).transactions || [];
+            transactions.sort((a, b) => b.createdAt - a.createdAt);
         } catch (e) {
             transactions = [];
         }
@@ -176,12 +184,10 @@ form.addEventListener('submit', async (e) => {
 
     if (!amount || !memo) return;
 
+    const originalTransactions = [...transactions];
     let createdAt = Date.now();
     if (dateVal) {
-        const [y, m, d] = dateVal.split('-');
-        const now = new Date();
-        now.setFullYear(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10));
-        createdAt = now.getTime();
+        createdAt = new Date(dateVal).getTime();
     }
 
     const transaction = {
@@ -193,20 +199,23 @@ form.addEventListener('submit', async (e) => {
         createdAt
     };
 
-    transactions.unshift(transaction); // Add to beginning
+    transactions.unshift(transaction);
     
     const success = await saveDataToGitHub();
     if (success) {
         // Reset form
         document.getElementById('amount').value = '';
         document.getElementById('memo').value = '';
-        const today = new Date();
-        dateInput.value = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+        const now = new Date();
+        const tzOffset = now.getTimezoneOffset() * 60000;
+        const localISOTime = (new Date(now - tzOffset)).toISOString().slice(0, 16);
+        dateInput.value = localISOTime;
         
         updateUI(document.querySelector('.filter-btn.active').dataset.filter);
     } else {
         // Rollback on fail
-        transactions.shift();
+        transactions = originalTransactions;
+        updateUI(document.querySelector('.filter-btn.active').dataset.filter);
     }
 });
 
@@ -276,7 +285,7 @@ function renderHistory(filterType) {
             </div>
             <div class="item-details">
                 <div class="item-memo">${t.memo}</div>
-                <div class="item-date">${formatDate(t.createdAt)} • ${typeLabel}</div>
+                <div class="item-date">${formatDateTime(t.createdAt)} • ${typeLabel}</div>
             </div>
             <div class="item-amount ${amountClass}">
                 ${sign}${formatCurrency(t.amount)}
@@ -300,6 +309,7 @@ filterBtns.forEach(btn => {
 
 // Update entire UI
 function updateUI(filterType) {
+    transactions.sort((a, b) => b.createdAt - a.createdAt);
     calculateBalances();
     renderHistory(filterType);
 }

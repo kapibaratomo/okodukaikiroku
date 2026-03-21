@@ -141,7 +141,8 @@ section {
 
 input[type="number"],
 input[type="text"],
-input[type="date"] {
+input[type="date"],
+input[type="datetime-local"] {
   width: 100%;
   padding: 12px 16px;
   border: 1px solid var(--border-color);
