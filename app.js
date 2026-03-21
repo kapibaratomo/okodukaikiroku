@@ -96,6 +96,7 @@ async function loadDataFromGitHub() {
         const content = decodeURIComponent(escape(atob(data.content)));
         const parsed = JSON.parse(content);
         transactions = parsed.transactions || [];
+        transactions.sort((a, b) => b.createdAt - a.createdAt);
         
         // Backup to local
         localStorage.setItem('okodukai_data_backup', JSON.stringify({ transactions }));
@@ -124,6 +125,7 @@ async function saveDataToGitHub() {
     
     showLoading(true);
     try {
+        transactions.sort((a, b) => b.createdAt - a.createdAt);
         const contentStr = JSON.stringify({ transactions }, null, 2);
         // base64 encode (handles utf-8 properly)
         const encodedContent = btoa(unescape(encodeURIComponent(contentStr)));
