@@ -9,6 +9,7 @@ const cashBalanceEl = document.getElementById('cashBalance');
 const form = document.getElementById('transactionForm');
 const historyList = document.getElementById('historyList');
 const filterBtns = document.querySelectorAll('.filter-btn');
+const dateInput = document.getElementById('transactionDate');
 
 // New DOM Elements for GitHub Sync
 const settingsBtn = document.getElementById('settingsBtn');
@@ -20,6 +21,10 @@ const loadingOverlay = document.getElementById('loadingOverlay');
 
 // Initialize
 async function init() {
+    // Set today's date as default
+    const today = new Date();
+    dateInput.value = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
     if (githubToken) {
         tokenInput.value = githubToken;
         await loadDataFromGitHub();
@@ -165,8 +170,17 @@ form.addEventListener('submit', async (e) => {
     const category = document.querySelector('input[name="category"]:checked').value;
     const amount = parseInt(document.getElementById('amount').value, 10);
     const memo = document.getElementById('memo').value;
+    const dateVal = document.getElementById('transactionDate').value;
 
     if (!amount || !memo) return;
+
+    let createdAt = Date.now();
+    if (dateVal) {
+        const [y, m, d] = dateVal.split('-');
+        const now = new Date();
+        now.setFullYear(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10));
+        createdAt = now.getTime();
+    }
 
     const transaction = {
         id: generateId(),
@@ -174,7 +188,7 @@ form.addEventListener('submit', async (e) => {
         category,
         amount,
         memo,
-        createdAt: Date.now()
+        createdAt
     };
 
     transactions.unshift(transaction); // Add to beginning
@@ -184,6 +198,9 @@ form.addEventListener('submit', async (e) => {
         // Reset form
         document.getElementById('amount').value = '';
         document.getElementById('memo').value = '';
+        const today = new Date();
+        dateInput.value = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+        
         updateUI(document.querySelector('.filter-btn.active').dataset.filter);
     } else {
         // Rollback on fail
