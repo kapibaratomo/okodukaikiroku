@@ -1,14 +1,6 @@
 {
   "transactions": [
     {
-      "id": "d0kzm9zmw",
-      "type": "pasmo",
-      "category": "expense",
-      "amount": 100,
-      "memo": "駐輪場",
-      "createdAt": 1773826744785
-    },
-    {
       "id": "6a5x1oozt",
       "type": "pasmo",
       "category": "income",
@@ -31,6 +23,22 @@
       "amount": 150,
       "memo": "秋月 フラットケーブル",
       "createdAt": 1773894774732
+    },
+    {
+      "id": "cgh2oydi5",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 220,
+      "memo": "新宿~岩本町",
+      "createdAt": 1773894000000
+    },
+    {
+      "id": "d0kzm9zmw",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 100,
+      "memo": "駐輪場",
+      "createdAt": 1773826744785
     },
     {
       "id": "ajmrevxdk",
