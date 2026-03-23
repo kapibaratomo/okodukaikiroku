@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "qjr0enoku",
+      "type": "cash",
+      "category": "expense",
+      "amount": 678,
+      "memo": "なぞ",
+      "createdAt": 1774101600000
+    },
+    {
       "id": "m9l20difc",
       "type": "pasmo",
       "category": "expense",
