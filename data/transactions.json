@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "fah7dqlsj",
+      "type": "cash",
+      "category": "income",
+      "amount": 1000,
+      "memo": "もともと",
+      "createdAt": 1774359060000
+    },
+    {
       "id": "ke5210qro",
       "type": "pasmo",
       "category": "expense",
