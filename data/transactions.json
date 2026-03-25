@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "lx39vywi1",
+      "type": "cash",
+      "category": "expense",
+      "amount": 1100,
+      "memo": "カラオケ",
+      "createdAt": 1774447560000
+    },
+    {
       "id": "35xgc643z",
       "type": "cash",
       "category": "expense",
