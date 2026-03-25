@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "35xgc643z",
+      "type": "cash",
+      "category": "expense",
+      "amount": 1700,
+      "memo": "ボーリング",
+      "createdAt": 1774447500000
+    },
+    {
       "id": "zk6ncj5jt",
       "type": "pasmo",
       "category": "expense",
