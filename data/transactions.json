@@ -57,6 +57,14 @@
       "createdAt": 1775194500000
     },
     {
+      "id": "efw58567o",
+      "type": "cash",
+      "category": "expense",
+      "amount": 500,
+      "memo": "ゴンドラ",
+      "createdAt": 1775171220000
+    },
+    {
       "id": "lx39vywi1",
       "type": "cash",
       "category": "expense",
