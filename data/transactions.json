@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "9pvsykgdi",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 314,
+      "memo": "京王よみうりランド~新宿",
+      "createdAt": 1775280780000
+    },
+    {
       "id": "i6hs7bjc2",
       "type": "pasmo",
       "category": "expense",
