@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "itdb9sw9o",
+      "type": "cash",
+      "category": "expense",
+      "amount": 610,
+      "memo": "クレープ",
+      "createdAt": 1775344080000
+    },
+    {
       "id": "7rr15k9xt",
       "type": "cash",
       "category": "expense",
