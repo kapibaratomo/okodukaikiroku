@@ -41,6 +41,14 @@
       "createdAt": 1775210880000
     },
     {
+      "id": "twp51fmep",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 314,
+      "memo": " 京王よみうりランド~新宿",
+      "createdAt": 1775194500000
+    },
+    {
       "id": "lx39vywi1",
       "type": "cash",
       "category": "expense",
