@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "7rr15k9xt",
+      "type": "cash",
+      "category": "expense",
+      "amount": 100,
+      "memo": "エアホッケー",
+      "createdAt": 1775344020000
+    },
+    {
       "id": "u6r636kzx",
       "type": "pasmo",
       "category": "expense",
