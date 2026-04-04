@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "u60iyq8r9",
+      "type": "cash",
+      "category": "expense",
+      "amount": 700,
+      "memo": "フライドポテト",
+      "createdAt": 1775344080000
+    },
+    {
       "id": "itdb9sw9o",
       "type": "cash",
       "category": "expense",
