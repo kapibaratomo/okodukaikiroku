@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "oj2ia8hl7",
+      "type": "cash",
+      "category": "income",
+      "amount": 700,
+      "memo": "英検3級合格記念",
+      "createdAt": 1775344140000
+    },
+    {
       "id": "u60iyq8r9",
       "type": "cash",
       "category": "expense",
