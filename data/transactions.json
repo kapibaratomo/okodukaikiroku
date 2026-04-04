@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "khdj518h9",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 209,
+      "memo": "御茶ノ水~池袋",
+      "createdAt": 1775280840000
+    },
+    {
       "id": "yz1lhiglp",
       "type": "pasmo",
       "category": "expense",
