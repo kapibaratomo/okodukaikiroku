@@ -423,3 +423,87 @@ input[type="radio"]:checked + .toggle-expense {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* Edit Button */
+.btn-edit {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  margin-left: 8px;
+  cursor: pointer;
+  padding: 4px;
+}
+.btn-edit:hover {
+  color: var(--pasmo-color);
+}
+
+/* Inline Edit Form */
+.history-item.editing {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 16px 0;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.edit-row {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-row select,
+.edit-row input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+}
+
+.edit-row select:focus,
+.edit-row input:focus {
+  border-color: var(--primary-color);
+}
+
+.edit-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.btn-save-edit {
+  flex: 1;
+  padding: 8px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-save-edit:hover {
+  opacity: 0.9;
+}
+
+.btn-cancel-edit {
+  flex: 1;
+  padding: 8px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+}
+.btn-cancel-edit:hover {
+  background: var(--bg-color);
+}

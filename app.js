@@ -19,19 +19,20 @@ const saveTokenBtn = document.getElementById('saveTokenBtn');
 const syncStatus = document.getElementById('syncStatus');
 const loadingOverlay = document.getElementById('loadingOverlay');
 
+// Helper: get today's date string (YYYY-MM-DD)
+function getTodayStr() {
+    const now = new Date();
+    return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+}
+
 // Initialize
 async function init() {
-    // Set today's date and time as default for datetime-local
-    const now = new Date();
-    const tzOffset = now.getTimezoneOffset() * 60000;
-    const localISOTime = (new Date(now - tzOffset)).toISOString().slice(0, 16);
-    dateInput.value = localISOTime;
+    dateInput.value = getTodayStr();
 
     if (githubToken) {
         tokenInput.value = githubToken;
         await loadDataFromGitHub();
     } else {
-        // Tokenがない場合は設定画面を開く
         settingsSection.classList.remove('hidden');
         loadDataFromLocalFallback();
     }
@@ -61,15 +62,13 @@ function formatCurrency(amount) {
     return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(amount);
 }
 
-// Format date and time
-function formatDateTime(timestamp) {
+// Format date (date only, no time)
+function formatDate(timestamp) {
     const date = new Date(timestamp);
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, '0');
     const d = String(date.getDate()).padStart(2, '0');
-    const hh = String(date.getHours()).padStart(2, '0');
-    const mm = String(date.getMinutes()).padStart(2, '0');
-    return `${y}/${m}/${d} ${hh}:${mm}`;
+    return `${y}/${m}/${d}`;
 }
 
 // GitHub API Helper
@@ -99,19 +98,16 @@ async function loadDataFromGitHub() {
         const data = await githubRequest('GET');
         githubSha = data.sha;
         
-        // base64 decode (handles utf-8 properly)
         const content = decodeURIComponent(escape(atob(data.content)));
         const parsed = JSON.parse(content);
         transactions = parsed.transactions || [];
         transactions.sort((a, b) => b.createdAt - a.createdAt);
         
-        // Backup to local
         localStorage.setItem('okodukai_data_backup', JSON.stringify({ transactions }));
         
     } catch (e) {
         console.error('GitHub Load Error:', e);
         if (e.message.includes('Not Found')) {
-            // File doesn't exist yet, we will create it on first save
             transactions = [];
         } else {
             showSyncStatus('同期に失敗しました（ローカルデータを使用します）', true);
@@ -134,19 +130,17 @@ async function saveDataToGitHub() {
     try {
         transactions.sort((a, b) => b.createdAt - a.createdAt);
         const contentStr = JSON.stringify({ transactions }, null, 2);
-        // base64 encode (handles utf-8 properly)
         const encodedContent = btoa(unescape(encodeURIComponent(contentStr)));
         
         const body = {
             message: `Update transactions.json (${new Date().toLocaleString()})`,
             content: encodedContent,
-            sha: githubSha // required for updating existing files
+            sha: githubSha
         };
         
         const data = await githubRequest('PUT', body);
-        githubSha = data.content.sha; // update SHA for next time
+        githubSha = data.content.sha;
         
-        // Backup
         localStorage.setItem('okodukai_data_backup', JSON.stringify({ transactions }));
         return true;
         
@@ -187,7 +181,8 @@ form.addEventListener('submit', async (e) => {
     const originalTransactions = [...transactions];
     let createdAt = Date.now();
     if (dateVal) {
-        createdAt = new Date(dateVal).getTime();
+        const [y, m, d] = dateVal.split('-');
+        createdAt = new Date(parseInt(y), parseInt(m) - 1, parseInt(d), 12, 0, 0).getTime();
     }
 
     const transaction = {
@@ -203,17 +198,11 @@ form.addEventListener('submit', async (e) => {
     
     const success = await saveDataToGitHub();
     if (success) {
-        // Reset form
         document.getElementById('amount').value = '';
         document.getElementById('memo').value = '';
-        const now = new Date();
-        const tzOffset = now.getTimezoneOffset() * 60000;
-        const localISOTime = (new Date(now - tzOffset)).toISOString().slice(0, 16);
-        dateInput.value = localISOTime;
-        
+        dateInput.value = getTodayStr();
         updateUI(document.querySelector('.filter-btn.active').dataset.filter);
     } else {
-        // Rollback on fail
         transactions = originalTransactions;
         updateUI(document.querySelector('.filter-btn.active').dataset.filter);
     }
@@ -232,10 +221,100 @@ async function deleteTransaction(id) {
         if (success) {
             updateUI(document.querySelector('.filter-btn.active').dataset.filter);
         } else {
-            // Rollback
             transactions.splice(index, 0, deleted);
         }
     }
+}
+
+// Edit transaction — show inline edit form
+function editTransaction(id) {
+    const index = transactions.findIndex(t => t.id === id);
+    if (index === -1) return;
+    const t = transactions[index];
+
+    // Find the li element and replace its content with an edit form
+    const items = historyList.querySelectorAll('.history-item');
+    let targetLi = null;
+    items.forEach(li => {
+        if (li.dataset.id === id) targetLi = li;
+    });
+    if (!targetLi) return;
+
+    // Build date string from timestamp
+    const d = new Date(t.createdAt);
+    const dateStr = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+
+    targetLi.className = 'history-item editing';
+    targetLi.innerHTML = `
+        <div class="edit-form">
+            <div class="edit-row">
+                <select class="edit-type">
+                    <option value="pasmo" ${t.type === 'pasmo' ? 'selected' : ''}>PASMO</option>
+                    <option value="cash" ${t.type === 'cash' ? 'selected' : ''}>現金</option>
+                </select>
+                <select class="edit-category">
+                    <option value="income" ${t.category === 'income' ? 'selected' : ''}>収入</option>
+                    <option value="expense" ${t.category === 'expense' ? 'selected' : ''}>支出</option>
+                </select>
+            </div>
+            <div class="edit-row">
+                <input type="date" class="edit-date" value="${dateStr}">
+                <input type="number" class="edit-amount" value="${t.amount}" min="1">
+            </div>
+            <div class="edit-row">
+                <input type="text" class="edit-memo" value="${t.memo}">
+            </div>
+            <div class="edit-actions">
+                <button class="btn-save-edit" onclick="saveEdit('${id}')">保存</button>
+                <button class="btn-cancel-edit" onclick="cancelEdit()">キャンセル</button>
+            </div>
+        </div>
+    `;
+}
+
+// Save edited transaction
+async function saveEdit(id) {
+    const index = transactions.findIndex(t => t.id === id);
+    if (index === -1) return;
+
+    const li = historyList.querySelector(`.history-item[data-id="${id}"]`);
+    if (!li) return;
+
+    const type = li.querySelector('.edit-type').value;
+    const category = li.querySelector('.edit-category').value;
+    const amount = parseInt(li.querySelector('.edit-amount').value, 10);
+    const memo = li.querySelector('.edit-memo').value.trim();
+    const dateVal = li.querySelector('.edit-date').value;
+
+    if (!amount || !memo) {
+        alert('金額とメモを入力してください');
+        return;
+    }
+
+    const originalTransactions = [...transactions];
+
+    // Update values
+    transactions[index].type = type;
+    transactions[index].category = category;
+    transactions[index].amount = amount;
+    transactions[index].memo = memo;
+    if (dateVal) {
+        const [y, m, d] = dateVal.split('-');
+        transactions[index].createdAt = new Date(parseInt(y), parseInt(m) - 1, parseInt(d), 12, 0, 0).getTime();
+    }
+
+    const success = await saveDataToGitHub();
+    if (success) {
+        updateUI(document.querySelector('.filter-btn.active').dataset.filter);
+    } else {
+        transactions = originalTransactions;
+        updateUI(document.querySelector('.filter-btn.active').dataset.filter);
+    }
+}
+
+// Cancel edit
+function cancelEdit() {
+    updateUI(document.querySelector('.filter-btn.active').dataset.filter);
 }
 
 // Calculate balances
@@ -273,6 +352,7 @@ function renderHistory(filterType) {
     filtered.forEach(t => {
         const li = document.createElement('li');
         li.className = 'history-item';
+        li.dataset.id = t.id;
         
         const isExp = t.category === 'expense';
         const sign = isExp ? '-' : '+';
@@ -285,12 +365,15 @@ function renderHistory(filterType) {
             </div>
             <div class="item-details">
                 <div class="item-memo">${t.memo}</div>
-                <div class="item-date">${formatDateTime(t.createdAt)} • ${typeLabel}</div>
+                <div class="item-date">${formatDate(t.createdAt)} • ${typeLabel}</div>
             </div>
             <div class="item-amount ${amountClass}">
                 ${sign}${formatCurrency(t.amount)}
             </div>
-            <button class="btn-delete" onclick="deleteTransaction('${t.id}')">
+            <button class="btn-edit" onclick="editTransaction('${t.id}')" title="編集">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            </button>
+            <button class="btn-delete" onclick="deleteTransaction('${t.id}')" title="削除">
                 <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
             </button>
         `;
