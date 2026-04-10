@@ -19,6 +19,12 @@ const saveTokenBtn = document.getElementById('saveTokenBtn');
 const syncStatus = document.getElementById('syncStatus');
 const loadingOverlay = document.getElementById('loadingOverlay');
 
+// New PDF Export DOM Elements
+const reportMonthEl = document.getElementById('reportMonth');
+const reportTypeEl = document.getElementById('reportType');
+const printBtn = document.getElementById('printBtn');
+const printArea = document.getElementById('printArea');
+
 // Helper: get today's date string (YYYY-MM-DD)
 function getTodayStr() {
     const now = new Date();
@@ -28,6 +34,10 @@ function getTodayStr() {
 // Initialize
 async function init() {
     dateInput.value = getTodayStr();
+
+    // Set default report month (current YYYY-MM)
+    const now = new Date();
+    reportMonthEl.value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
 
     if (githubToken) {
         tokenInput.value = githubToken;
@@ -416,6 +426,102 @@ saveTokenBtn.addEventListener('click', async () => {
     await loadDataFromGitHub();
     updateUI(document.querySelector('.filter-btn.active').dataset.filter);
     showSyncStatus('同期が完了しました');
+});
+
+// Print (PDF Export) logic
+printBtn.addEventListener('click', () => {
+    const monthStr = reportMonthEl.value; // YYYY-MM
+    const typeVal = reportTypeEl.value;   // all, pasmo, cash
+    
+    if (!monthStr) {
+        alert('月を選択してください');
+        return;
+    }
+    
+    const [year, month] = monthStr.split('-');
+    
+    // Filter transactions by month and type
+    const targetTransactions = transactions.filter(t => {
+        const d = new Date(t.createdAt);
+        const y = String(d.getFullYear());
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        
+        if (y !== year || m !== month) return false;
+        if (typeVal !== 'all' && t.type !== typeVal) return false;
+        
+        return true;
+    });
+    
+    // Sort chronological for the report (oldest to newest)
+    const sortedForPrint = [...targetTransactions].sort((a, b) => a.createdAt - b.createdAt);
+    
+    let typeLabel = 'すべて';
+    if(typeVal === 'pasmo') typeLabel = 'PASMO';
+    if(typeVal === 'cash')  typeLabel = '現金';
+    
+    let totalIncome = 0;
+    let totalExpense = 0;
+    
+    let tableRows = '';
+    sortedForPrint.forEach(t => {
+        const d = new Date(t.createdAt);
+        // Format as MM/DD HH:mm
+        const dateStr = `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+        
+        const isExp = t.category === 'expense';
+        if (isExp) totalExpense += t.amount;
+        else totalIncome += t.amount;
+        
+        const typeStr = t.type === 'pasmo' ? 'PASMO' : '現金';
+        const sign = isExp ? '-' : '+';
+        const colorStyle = isExp ? 'color: #ef4444;' : 'color: #10b981;';
+        
+        tableRows += `
+            <tr>
+                <td>${dateStr}</td>
+                <td>${typeStr}</td>
+                <td>${t.memo}</td>
+                <td class="print-amount" style="${colorStyle}">${sign}${formatCurrency(t.amount)}</td>
+            </tr>
+        `;
+    });
+    
+    if (sortedForPrint.length === 0) {
+        tableRows = '<tr><td colspan="4" style="text-align: center; padding: 20px;">この条件の履歴はありません</td></tr>';
+    }
+    
+    const html = `
+        <div class="print-header">
+            <h2>お小遣い記録レポート (${year}年${parseInt(month)}月) - ${typeLabel}</h2>
+        </div>
+        <table class="print-table">
+            <thead>
+                <tr>
+                    <th>日時</th>
+                    <th>支払い方法</th>
+                    <th>メモ</th>
+                    <th class="print-amount">金額</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${tableRows}
+            </tbody>
+        </table>
+        <div class="print-summary">
+            <div>当月 収入合計: <span style="color: #10b981;">${formatCurrency(totalIncome)}</span></div>
+            <div>当月 支出合計: <span style="color: #ef4444;">-${formatCurrency(totalExpense)}</span></div>
+            <div class="summary-total">
+                当月 収支: ${formatCurrency(totalIncome - totalExpense)}
+            </div>
+        </div>
+    `;
+    
+    printArea.innerHTML = html;
+    
+    // Wait briefly for DOM render before opening print dialog
+    setTimeout(() => {
+        window.print();
+    }, 100);
 });
 
 // Start app

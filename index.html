@@ -16,9 +16,12 @@
         <header>
             <div class="header-top">
                 <h1>お小遣い記録</h1>
-                <button id="settingsBtn" class="icon-btn" title="設定">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <a href="schedule.html" style="font-size:13px; color:#6b7280; text-decoration:none; font-weight:500; padding:6px 12px; border-radius:8px; background:#fff; border:1px solid #e5e7eb; transition:all 0.2s;">📋 スケジュール</a>
+                    <button id="settingsBtn" class="icon-btn" title="設定">
                     <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 </button>
+                </div>
             </div>
             <div class="balance-cards">
                 <div class="card-group">
@@ -69,6 +72,19 @@
             </form>
         </section>
 
+        <section class="pdf-export">
+            <h2>PDF出力 (レポート印刷)</h2>
+            <div class="form-group" style="display: flex; gap: 8px;">
+                <input type="month" id="reportMonth" style="flex: 1;" required>
+                <select id="reportType" style="flex: 1; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 16px; outline: none; font-family: inherit; background-color: var(--surface-color);">
+                    <option value="all">すべて</option>
+                    <option value="pasmo">PASMO</option>
+                    <option value="cash">現金</option>
+                </select>
+            </div>
+            <button id="printBtn" class="btn-outline" style="width: 100%; margin-top: 8px;">この条件でPDF用画面を開く</button>
+        </section>
+
         <section class="history">
             <div class="history-header">
                 <h2>履歴</h2>
@@ -100,6 +116,10 @@
             </div>
         </section>
     </div>
+
+    <!-- 印刷用エリア -->
+    <div id="printArea" class="print-area hidden-screen"></div>
+
     <script src="config.js"></script>
     <script src="app.js"></script>
 </body>
