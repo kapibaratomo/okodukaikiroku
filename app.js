@@ -459,9 +459,6 @@ printBtn.addEventListener('click', () => {
     if(typeVal === 'pasmo') typeLabel = 'PASMO';
     if(typeVal === 'cash')  typeLabel = '現金';
     
-    let totalIncome = 0;
-    let totalExpense = 0;
-    
     let tableRows = '';
     sortedForPrint.forEach(t => {
         const d = new Date(t.createdAt);
@@ -469,8 +466,6 @@ printBtn.addEventListener('click', () => {
         const dateStr = `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
         
         const isExp = t.category === 'expense';
-        if (isExp) totalExpense += t.amount;
-        else totalIncome += t.amount;
         
         const typeStr = t.type === 'pasmo' ? 'PASMO' : '現金';
         const sign = isExp ? '-' : '+';
@@ -507,13 +502,6 @@ printBtn.addEventListener('click', () => {
                 ${tableRows}
             </tbody>
         </table>
-        <div class="print-summary">
-            <div>当月 収入合計: <span style="color: #10b981;">${formatCurrency(totalIncome)}</span></div>
-            <div>当月 支出合計: <span style="color: #ef4444;">-${formatCurrency(totalExpense)}</span></div>
-            <div class="summary-total">
-                当月 収支: ${formatCurrency(totalIncome - totalExpense)}
-            </div>
-        </div>
     `;
     
     printArea.innerHTML = html;
