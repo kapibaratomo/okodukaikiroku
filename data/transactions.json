@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "bk8rrehnz",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 420,
+      "memo": "ノート",
+      "createdAt": 1776049200000
+    },
+    {
       "id": "xvz02pdtv",
       "type": "pasmo",
       "category": "expense",
