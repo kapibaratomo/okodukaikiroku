@@ -281,14 +281,6 @@
       "createdAt": 1774090800000
     },
     {
-      "id": "06353r6mm",
-      "type": "pasmo",
-      "category": "expense",
-      "amount": 66,
-      "memo": "秋葉原~豊洲",
-      "createdAt": 1774075380000
-    },
-    {
       "id": "6a5x1oozt",
       "type": "pasmo",
       "category": "income",
@@ -319,6 +311,14 @@
       "amount": 220,
       "memo": "新宿~岩本町",
       "createdAt": 1773894000000
+    },
+    {
+      "id": "06353r6mm",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 66,
+      "memo": "秋葉原~豊洲",
+      "createdAt": 1773889200000
     },
     {
       "id": "d0kzm9zmw",
