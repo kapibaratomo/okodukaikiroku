@@ -273,14 +273,6 @@
       "createdAt": 1774090800000
     },
     {
-      "id": "1vsg0g4og",
-      "type": "pasmo",
-      "category": "expense",
-      "amount": 100,
-      "memo": "駐輪場",
-      "createdAt": 1774090800000
-    },
-    {
       "id": "6a5x1oozt",
       "type": "pasmo",
       "category": "income",
@@ -311,6 +303,14 @@
       "amount": 220,
       "memo": "新宿~岩本町",
       "createdAt": 1773894000000
+    },
+    {
+      "id": "1vsg0g4og",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 100,
+      "memo": "駐輪場",
+      "createdAt": 1773889200000
     },
     {
       "id": "06353r6mm",
