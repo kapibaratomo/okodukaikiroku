@@ -3,9 +3,9 @@
     {
       "id": "yljpw1vtx",
       "type": "cash",
-      "category": "income",
+      "category": "expense",
       "amount": 270,
-      "memo": "おにぎり",
+      "memo": "ツナマヨおにぎり",
       "createdAt": 1776481200000
     },
     {
