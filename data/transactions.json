@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "297nudpao",
+      "type": "cash",
+      "category": "income",
+      "amount": 1100,
+      "memo": "なぞ",
+      "createdAt": 1776481200000
+    },
+    {
       "id": "abjj63xr6",
       "type": "cash",
       "category": "income",
