@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "ym2fskrbi",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 200,
+      "memo": "駐輪場",
+      "createdAt": 1776654000000
+    },
+    {
       "id": "yljpw1vtx",
       "type": "cash",
       "category": "expense",
