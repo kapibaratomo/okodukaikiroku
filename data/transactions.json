@@ -25,6 +25,14 @@
       "createdAt": 1777345200000
     },
     {
+      "id": "ke8w6uwdj",
+      "type": "cash",
+      "category": "expense",
+      "amount": 220,
+      "memo": "アイス",
+      "createdAt": 1777258800000
+    },
+    {
       "id": "98ewiroyp",
       "type": "pasmo",
       "category": "expense",
