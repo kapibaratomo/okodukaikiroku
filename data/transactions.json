@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "cjs0vjs4g",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 410,
+      "memo": "西神中央~ハーバーランド",
+      "createdAt": 1777863600000
+    },
+    {
       "id": "n0qoc9cjh",
       "type": "pasmo",
       "category": "expense",
