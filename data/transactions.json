@@ -9,6 +9,14 @@
       "createdAt": 1778295600000
     },
     {
+      "id": "4it9na9qz",
+      "type": "cash",
+      "category": "expense",
+      "amount": 1000,
+      "memo": "缶バッチ",
+      "createdAt": 1778209200000
+    },
+    {
       "id": "25xczekvz",
       "type": "pasmo",
       "category": "expense",
