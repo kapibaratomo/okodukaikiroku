@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "qwzi7a6v8",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 600,
+      "memo": "ノート",
+      "createdAt": 1778641200000
+    },
+    {
       "id": "1tpbl6bt6",
       "type": "pasmo",
       "category": "expense",
