@@ -67,7 +67,7 @@
     {
       "id": "z2iqy4umg",
       "type": "cash",
-      "category": "expense",
+      "category": "income",
       "amount": 100,
       "memo": "余り",
       "createdAt": 1778900400000
