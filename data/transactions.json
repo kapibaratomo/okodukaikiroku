@@ -153,6 +153,14 @@
       "createdAt": 1778468400000
     },
     {
+      "id": "4y7w56vsb",
+      "type": "cash",
+      "category": "expense",
+      "amount": 600,
+      "memo": "余り",
+      "createdAt": 1778295600000
+    },
+    {
       "id": "j0t2ux3fz",
       "type": "pasmo",
       "category": "expense",
