@@ -155,7 +155,7 @@
     {
       "id": "4y7w56vsb",
       "type": "cash",
-      "category": "expense",
+      "category": "income",
       "amount": 600,
       "memo": "余り",
       "createdAt": 1778295600000
