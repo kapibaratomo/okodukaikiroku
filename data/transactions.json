@@ -17,6 +17,14 @@
       "createdAt": 1779246000000
     },
     {
+      "id": "n3lulfvv8",
+      "type": "cash",
+      "category": "expense",
+      "amount": 820,
+      "memo": "光が丘~豊洲 往復",
+      "createdAt": 1779159600000
+    },
+    {
       "id": "1y3h3kboa",
       "type": "pasmo",
       "category": "expense",
