@@ -153,6 +153,14 @@
       "createdAt": 1778554800000
     },
     {
+      "id": "6z3y8o8ao",
+      "type": "cash",
+      "category": "expense",
+      "amount": 230,
+      "memo": "メロンパン",
+      "createdAt": 1778468400000
+    },
+    {
       "id": "xt8cy46iq",
       "type": "pasmo",
       "category": "expense",
