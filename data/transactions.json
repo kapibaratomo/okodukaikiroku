@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "frgvoe27s",
+      "type": "cash",
+      "category": "expense",
+      "amount": 630,
+      "memo": "なぞ",
+      "createdAt": 1779332400000
+    },
+    {
       "id": "e0f5yvmjz",
       "type": "cash",
       "category": "expense",
