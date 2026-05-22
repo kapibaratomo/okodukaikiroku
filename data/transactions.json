@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "n9xbmj6bc",
+      "type": "cash",
+      "category": "expense",
+      "amount": 300,
+      "memo": "電子部品",
+      "createdAt": 1779418800000
+    },
+    {
       "id": "frgvoe27s",
       "type": "cash",
       "category": "expense",
