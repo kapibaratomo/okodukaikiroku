@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "pkywk0md3",
+      "type": "cash",
+      "category": "expense",
+      "amount": 220,
+      "memo": "浅草~末広町",
+      "createdAt": 1779418800000
+    },
+    {
       "id": "n9xbmj6bc",
       "type": "cash",
       "category": "expense",
