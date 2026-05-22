@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "2axs2dfmu",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 209,
+      "memo": "秋葉原~代々木",
+      "createdAt": 1779418800000
+    },
+    {
       "id": "6r90cad9x",
       "type": "pasmo",
       "category": "expense",
