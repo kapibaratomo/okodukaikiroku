@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "w9ggah03q",
+      "type": "cash",
+      "category": "expense",
+      "amount": 3000,
+      "memo": "アマプラ",
+      "createdAt": 1779678000000
+    },
+    {
       "id": "elrgelphh",
       "type": "cash",
       "category": "income",
