@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "vsd86ofsa",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 180,
+      "memo": "飲み物",
+      "createdAt": 1780369200000
+    },
+    {
       "id": "xh3vgxcyw",
       "type": "cash",
       "category": "income",
