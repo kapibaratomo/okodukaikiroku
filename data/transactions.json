@@ -1,14 +1,6 @@
 {
   "transactions": [
     {
-      "id": "jvse3ehh7",
-      "type": "pasmo",
-      "category": "expense",
-      "amount": 260,
-      "memo": "立命館守山~守山(バス)",
-      "createdAt": 1783134000000
-    },
-    {
       "id": "7ig9kiqjn",
       "type": "pasmo",
       "category": "expense",
@@ -31,6 +23,14 @@
       "amount": 100,
       "memo": "駐輪場",
       "createdAt": 1782183600000
+    },
+    {
+      "id": "jvse3ehh7",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 260,
+      "memo": "立命館守山~守山(バス)",
+      "createdAt": 1782010800000
     },
     {
       "id": "lntgdxovn",
