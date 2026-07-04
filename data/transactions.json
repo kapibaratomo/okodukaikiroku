@@ -9,6 +9,14 @@
       "createdAt": 1784602800000
     },
     {
+      "id": "jvse3ehh7",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 260,
+      "memo": "立命館守山~守山(バス)",
+      "createdAt": 1783134000000
+    },
+    {
       "id": "7ig9kiqjn",
       "type": "pasmo",
       "category": "expense",
