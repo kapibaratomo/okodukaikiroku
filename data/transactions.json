@@ -1,14 +1,6 @@
 {
   "transactions": [
     {
-      "id": "yalt503d2",
-      "type": "pasmo",
-      "category": "expense",
-      "amount": 200,
-      "memo": "駐輪場",
-      "createdAt": 1783479600000
-    },
-    {
       "id": "f1hta48d6",
       "type": "pasmo",
       "category": "expense",
