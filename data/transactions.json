@@ -1,14 +1,6 @@
 {
   "transactions": [
     {
-      "id": "illj4ewva",
-      "type": "pasmo",
-      "category": "expense",
-      "amount": 180,
-      "memo": "有楽町~大津",
-      "createdAt": 1784862000000
-    },
-    {
       "id": "1rum0ye0f",
       "type": "pasmo",
       "category": "expense",
@@ -39,6 +31,14 @@
       "amount": 260,
       "memo": "守山~立命館守山(バス)",
       "createdAt": 1782010800000
+    },
+    {
+      "id": "illj4ewva",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 180,
+      "memo": "有楽町~大津",
+      "createdAt": 1781924400000
     },
     {
       "id": "xujmz4drt",
