@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "illj4ewva",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 180,
+      "memo": "有楽町~大津",
+      "createdAt": 1784862000000
+    },
+    {
       "id": "1rum0ye0f",
       "type": "pasmo",
       "category": "expense",
