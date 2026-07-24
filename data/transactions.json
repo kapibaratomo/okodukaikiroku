@@ -105,14 +105,6 @@
       "createdAt": 1781924400000
     },
     {
-      "id": "jh9swtubq",
-      "type": "pasmo",
-      "category": "expense",
-      "amount": 180,
-      "memo": "京都~大津",
-      "createdAt": 1781924400000
-    },
-    {
       "id": "p2dvk9jga",
       "type": "pasmo",
       "category": "expense",
