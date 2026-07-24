@@ -33,6 +33,14 @@
       "createdAt": 1782010800000
     },
     {
+      "id": "xujmz4drt",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 178,
+      "memo": "豊洲~有楽町",
+      "createdAt": 1781924400000
+    },
+    {
       "id": "jh9swtubq",
       "type": "pasmo",
       "category": "expense",
