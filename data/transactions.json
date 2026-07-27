@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "nh72welr0",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 400,
+      "memo": "武州中川~御花畑",
+      "createdAt": 1784948400000
+    },
+    {
       "id": "bqs6fphy6",
       "type": "pasmo",
       "category": "expense",
