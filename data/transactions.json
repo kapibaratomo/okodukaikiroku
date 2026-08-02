@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "oc23zm8c1",
+      "type": "pasmo",
+      "category": "income",
+      "amount": 5000,
+      "memo": "チャージ",
+      "createdAt": 1785639600000
+    },
+    {
       "id": "msefxl353",
       "type": "pasmo",
       "category": "expense",
