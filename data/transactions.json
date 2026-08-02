@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "yq1pv1wco",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 541,
+      "memo": "羽田空港第１・第２ターミナル~大門",
+      "createdAt": 1785639600000
+    },
+    {
       "id": "oc23zm8c1",
       "type": "pasmo",
       "category": "income",
