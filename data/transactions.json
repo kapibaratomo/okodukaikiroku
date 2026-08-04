@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "pv43sluyb",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 178,
+      "memo": "豊洲~新木場",
+      "createdAt": 1785812400000
+    },
+    {
       "id": "hhuwvysa7",
       "type": "pasmo",
       "category": "expense",
