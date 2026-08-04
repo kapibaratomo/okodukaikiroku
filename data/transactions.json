@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "f3r41irh5",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 616,
+      "memo": "千葉みなと~新木場",
+      "createdAt": 1785812400000
+    },
+    {
       "id": "9xcn0zphw",
       "type": "pasmo",
       "category": "expense",
