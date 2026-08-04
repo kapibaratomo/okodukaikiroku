@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "9xcn0zphw",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 190,
+      "memo": "新港車庫前~千葉みなと駅西口",
+      "createdAt": 1785812400000
+    },
+    {
       "id": "c39mqhikp",
       "type": "pasmo",
       "category": "expense",
