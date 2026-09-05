@@ -1,14 +1,6 @@
 {
   "transactions": [
     {
-      "id": "73jr7nikp",
-      "type": "pasmo",
-      "category": "expense",
-      "amount": 347,
-      "memo": "雑司が谷~練馬",
-      "createdAt": 1788663600000
-    },
-    {
       "id": "7jl0g1sab",
       "type": "pasmo",
       "category": "income",
@@ -47,6 +39,14 @@
       "amount": 347,
       "memo": "練馬~雑司が谷",
       "createdAt": 1786071600000
+    },
+    {
+      "id": "73jr7nikp",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 347,
+      "memo": "雑司が谷~練馬",
+      "createdAt": 1785985200000
     },
     {
       "id": "zau6kw1hi",
