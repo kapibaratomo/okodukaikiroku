@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "8zyuv3xcf",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 210,
+      "memo": "新神戸~三宮",
+      "createdAt": 1786330800000
+    },
+    {
       "id": "7dk1826l9",
       "type": "pasmo",
       "category": "expense",
