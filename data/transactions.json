@@ -9,6 +9,14 @@
       "createdAt": 1788663600000
     },
     {
+      "id": "8ox9kyd89",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 272,
+      "memo": "光が丘~船堀",
+      "createdAt": 1786158000000
+    },
+    {
       "id": "5941sze9n",
       "type": "pasmo",
       "category": "expense",
