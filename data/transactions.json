@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "tslitfrgy",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 253,
+      "memo": "東京~東中野",
+      "createdAt": 1787108400000
+    },
+    {
       "id": "mu0hbmngr",
       "type": "pasmo",
       "category": "expense",
