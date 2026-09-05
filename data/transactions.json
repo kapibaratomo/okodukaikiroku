@@ -9,6 +9,14 @@
       "createdAt": 1788663600000
     },
     {
+      "id": "zau6kw1hi",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 200,
+      "memo": "駐輪場",
+      "createdAt": 1785985200000
+    },
+    {
       "id": "fvvfkga04",
       "type": "pasmo",
       "category": "expense",
