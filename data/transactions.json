@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "4mo3fley6",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 347,
+      "memo": "練馬~雑司が谷",
+      "createdAt": 1787194800000
+    },
+    {
       "id": "tslitfrgy",
       "type": "pasmo",
       "category": "expense",
