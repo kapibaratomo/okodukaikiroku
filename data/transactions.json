@@ -9,6 +9,14 @@
       "createdAt": 1788663600000
     },
     {
+      "id": "dotcoedm5",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 347,
+      "memo": "練馬~雑司が谷",
+      "createdAt": 1786071600000
+    },
+    {
       "id": "zau6kw1hi",
       "type": "pasmo",
       "category": "expense",
