@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "a6iqp2sz2",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 410,
+      "memo": "三宮~西神中央",
+      "createdAt": 1786330800000
+    },
+    {
       "id": "8zyuv3xcf",
       "type": "pasmo",
       "category": "expense",
