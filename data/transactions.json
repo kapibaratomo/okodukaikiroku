@@ -1,14 +1,6 @@
 {
   "transactions": [
     {
-      "id": "u1bkwuzgz",
-      "type": "pasmo",
-      "category": "expense",
-      "amount": 347,
-      "memo": "雑司が谷~練馬",
-      "createdAt": 1788750000000
-    },
-    {
       "id": "0e9kmhpgb",
       "type": "pasmo",
       "category": "expense",
@@ -23,6 +15,14 @@
       "amount": 358,
       "memo": "大門~青物横丁",
       "createdAt": 1787454000000
+    },
+    {
+      "id": "u1bkwuzgz",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 347,
+      "memo": "雑司が谷~練馬",
+      "createdAt": 1787367600000
     },
     {
       "id": "1ib10ykie",
