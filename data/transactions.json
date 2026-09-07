@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "k1r8mfbz1",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 189,
+      "memo": "有明テニスの森~豊洲",
+      "createdAt": 1788663600000
+    },
+    {
       "id": "g77q258uu",
       "type": "pasmo",
       "category": "expense",
