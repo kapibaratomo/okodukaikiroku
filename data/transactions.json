@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "07vorrsl8",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 388,
+      "memo": "汐留~テレコムセンター",
+      "createdAt": 1787886000000
+    },
+    {
       "id": "0e9kmhpgb",
       "type": "pasmo",
       "category": "expense",
