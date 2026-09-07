@@ -9,6 +9,14 @@
       "createdAt": 1788750000000
     },
     {
+      "id": "jajxcbld6",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 358,
+      "memo": "大門~青物横丁",
+      "createdAt": 1787454000000
+    },
+    {
       "id": "1ib10ykie",
       "type": "pasmo",
       "category": "expense",
