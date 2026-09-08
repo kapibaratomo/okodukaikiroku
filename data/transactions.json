@@ -25,6 +25,14 @@
       "createdAt": 1788836400000
     },
     {
+      "id": "bmedvomb3",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 140,
+      "memo": "飲み物",
+      "createdAt": 1788663600000
+    },
+    {
       "id": "k1r8mfbz1",
       "type": "pasmo",
       "category": "expense",
