@@ -2,7 +2,7 @@
   "transactions": [
     {
       "id": "mcji4g2z0",
-      "type": "pasmo",
+      "type": "cash",
       "category": "expense",
       "amount": 270,
       "memo": "おにぎり",
