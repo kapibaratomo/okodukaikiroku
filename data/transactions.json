@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "k0mrajyui",
+      "type": "cash",
+      "category": "expense",
+      "amount": 7000,
+      "memo": "めめ村",
+      "createdAt": 1790132400000
+    },
+    {
       "id": "mcji4g2z0",
       "type": "cash",
       "category": "expense",
