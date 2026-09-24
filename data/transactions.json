@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "y3uybl61m",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 155,
+      "memo": "渋谷~代々木",
+      "createdAt": 1790218800000
+    },
+    {
       "id": "k6810057g",
       "type": "pasmo",
       "category": "expense",
