@@ -17,6 +17,14 @@
       "createdAt": 1790132400000
     },
     {
+      "id": "cidnl2nrm",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 388,
+      "memo": "羽田空港第3ターミナル~天王洲アイル",
+      "createdAt": 1790046000000
+    },
+    {
       "id": "yhc0kc5wv",
       "type": "pasmo",
       "category": "expense",
