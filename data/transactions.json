@@ -17,6 +17,14 @@
       "createdAt": 1790132400000
     },
     {
+      "id": "yhc0kc5wv",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 327,
+      "memo": "大門~羽田空港第3ターミナル",
+      "createdAt": 1788922800000
+    },
+    {
       "id": "mcji4g2z0",
       "type": "cash",
       "category": "expense",
