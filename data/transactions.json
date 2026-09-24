@@ -2,8 +2,8 @@
   "transactions": [
     {
       "id": "g3jpb72cs",
-      "type": "pasmo",
-      "category": "expense",
+      "type": "cash",
+      "category": "income",
       "amount": 680,
       "memo": "2026年9月 お小遣い",
       "createdAt": 1790132400000
