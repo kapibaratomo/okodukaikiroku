@@ -2,7 +2,7 @@
   "transactions": [
     {
       "id": "m64mztyat",
-      "type": "cash",
+      "type": "pasmo",
       "category": "expense",
       "amount": 100,
       "memo": "駐輪場",
