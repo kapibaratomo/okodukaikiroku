@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "a3z24gz8w",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 230,
+      "memo": "西武バス",
+      "createdAt": 1790391600000
+    },
+    {
       "id": "m64mztyat",
       "type": "pasmo",
       "category": "expense",
