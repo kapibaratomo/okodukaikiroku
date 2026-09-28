@@ -9,6 +9,14 @@
       "createdAt": 1790564400000
     },
     {
+      "id": "x5rinfqhr",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 230,
+      "memo": "西武バス",
+      "createdAt": 1790478000000
+    },
+    {
       "id": "gq634z207",
       "type": "pasmo",
       "category": "expense",
