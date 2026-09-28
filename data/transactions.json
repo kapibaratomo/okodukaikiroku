@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "x6dlt5935",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 160,
+      "memo": "有楽町~浜松町",
+      "createdAt": 1790478000000
+    },
+    {
       "id": "byge8fbwv",
       "type": "pasmo",
       "category": "expense",
