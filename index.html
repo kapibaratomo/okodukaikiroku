@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>お小遣い記録</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Chart.js and html2pdf.js for graphs and iPhone PDF export -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <div id="loadingOverlay" class="loading-overlay hidden">
@@ -35,6 +38,26 @@
                 </div>
             </div>
         </header>
+
+        <section class="analytics-card">
+            <div class="analytics-header">
+                <h2>📊 収支・支出グラフ</h2>
+                <div class="chart-controls">
+                    <div class="chart-tab-group">
+                        <button id="chartTabCategory" class="chart-tab active" data-tab="category">内訳</button>
+                        <button id="chartTabMonthly" class="chart-tab" data-tab="monthly">推移</button>
+                    </div>
+                    <select id="chartPeriodSelect" class="chart-period-select">
+                        <option value="month">今月</option>
+                        <option value="all" selected>全期間</option>
+                    </select>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="analyticsChart"></canvas>
+            </div>
+            <div id="chartSummary" class="chart-summary"></div>
+        </section>
 
         <section class="add-transaction">
             <h2>記録を追加</h2>
@@ -81,7 +104,18 @@
                     <option value="cash">現金</option>
                 </select>
             </div>
-            <button id="printBtn" class="btn-outline" style="width: 100%; margin-top: 8px;">この条件でPDF用画面を開く</button>
+            <div class="pdf-buttons" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                <button id="downloadPdfBtn" class="btn-submit" style="background: #2563eb; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    📄 iPhoneでPDFを保存 / ダウンロード
+                </button>
+                <button id="printBtn" class="btn-outline" style="width: 100%;">
+                    🖨️ 印刷ダイアログを開く (AirPrint)
+                </button>
+            </div>
+            <p class="iphone-tip">
+                💡 <strong>iPhoneでの保存方法:</strong>「PDFを保存」を押すと直接ファイルとしてダウンロードできます。「印刷ダイアログ」を使う場合は、プレビュー画面を2本指でピンチアウト（外側に広げる）するとPDF保存画面になります。
+            </p>
         </section>
 
         <section class="history">

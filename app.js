@@ -23,7 +23,18 @@ const loadingOverlay = document.getElementById('loadingOverlay');
 const reportMonthEl = document.getElementById('reportMonth');
 const reportTypeEl = document.getElementById('reportType');
 const printBtn = document.getElementById('printBtn');
+const downloadPdfBtn = document.getElementById('downloadPdfBtn');
 const printArea = document.getElementById('printArea');
+
+// Analytics & Chart Elements
+const chartTabCategory = document.getElementById('chartTabCategory');
+const chartTabMonthly = document.getElementById('chartTabMonthly');
+const chartPeriodSelect = document.getElementById('chartPeriodSelect');
+const analyticsChartEl = document.getElementById('analyticsChart');
+const chartSummaryEl = document.getElementById('chartSummary');
+let analyticsChart = null;
+let currentChartTab = 'category';
+let currentChartPeriod = 'all';
 
 // Helper: get today's date string (YYYY-MM-DD)
 function getTodayStr() {
@@ -405,6 +416,238 @@ function updateUI(filterType) {
     transactions.sort((a, b) => b.createdAt - a.createdAt);
     calculateBalances();
     renderHistory(filterType);
+    renderCharts();
+}
+
+// =========================================================
+// Category Classification & Chart.js Analytics
+// =========================================================
+const CATEGORY_COLORS = {
+    '交通費': '#3b82f6',         // 青
+    '駐輪場': '#06b6d4',         // シアン
+    '娯楽・レジャー': '#8b5cf6', // 紫
+    '飲食': '#f59e0b',           // オレンジ
+    'サブスク': '#ec4899',       // ピンク
+    'ロボット・工作': '#10b981', // 緑
+    'その他': '#94a3b8'          // グレー
+};
+
+function classifyCategory(memo) {
+    const m = (memo || '').toLowerCase();
+    if (m.includes('~') || m.includes('～') || m.includes('駅') || m.includes('線')) return '交通費';
+    if (m.includes('駐輪場') || m.includes('自転車')) return '駐輪場';
+    if (m.includes('ボーリング') || m.includes('ボウリング') || m.includes('カラオケ') || m.includes('エアホッケー') || m.includes('ゴンドラ') || m.includes('映画') || m.includes('ゲーム')) return '娯楽・レジャー';
+    if (m.includes('ポテト') || m.includes('クレープ') || m.includes('飲み物') || m.includes('ジュース') || m.includes('アイス') || m.includes('カフェ') || m.includes('ランチ') || m.includes('ご飯')) return '飲食';
+    if (m.includes('ネトフリ') || m.includes('netflix') || m.includes('サブスク')) return 'サブスク';
+    if (m.includes('秋月') || m.includes('千石') || m.includes('ケーブル') || m.includes('パーツ') || m.includes('基板') || m.includes('ロボ') || m.includes('センサー')) return 'ロボット・工作';
+    return 'その他';
+}
+
+function renderCharts() {
+    if (typeof Chart === 'undefined' || !analyticsChartEl) return;
+
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth();
+
+    let filteredTransactions = transactions;
+    if (currentChartPeriod === 'month') {
+        filteredTransactions = transactions.filter(t => {
+            const d = new Date(t.createdAt);
+            return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+        });
+    }
+
+    if (analyticsChart) {
+        analyticsChart.destroy();
+        analyticsChart = null;
+    }
+
+    if (currentChartTab === 'category') {
+        renderCategoryChart(filteredTransactions);
+    } else {
+        renderMonthlyChart(filteredTransactions);
+    }
+}
+
+function renderCategoryChart(data) {
+    const expenseData = data.filter(t => t.category === 'expense');
+    const categoryTotals = {};
+    let totalExpense = 0;
+
+    expenseData.forEach(t => {
+        const cat = classifyCategory(t.memo);
+        categoryTotals[cat] = (categoryTotals[cat] || 0) + t.amount;
+        totalExpense += t.amount;
+    });
+
+    const categories = Object.keys(categoryTotals).sort((a, b) => categoryTotals[b] - categoryTotals[a]);
+    const values = categories.map(c => categoryTotals[c]);
+    const bgColors = categories.map(c => CATEGORY_COLORS[c] || '#94a3b8');
+
+    if (values.length === 0) {
+        chartSummaryEl.innerHTML = '<span style="color: #9ca3af;">支出データがありません</span>';
+        const ctx = analyticsChartEl.getContext('2d');
+        analyticsChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['支出なし'],
+                datasets: [{ data: [1], backgroundColor: ['#e5e7eb'] }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: false }
+                }
+            }
+        });
+        return;
+    }
+
+    const ctx = analyticsChartEl.getContext('2d');
+    analyticsChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: categories,
+            datasets: [{
+                data: values,
+                backgroundColor: bgColors,
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { boxWidth: 12, font: { size: 12 }, padding: 12 }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const val = context.raw;
+                            const pct = totalExpense > 0 ? ((val / totalExpense) * 100).toFixed(1) : 0;
+                            return ` ${context.label}: ${formatCurrency(val)} (${pct}%)`;
+                        }
+                    }
+                }
+            },
+            cutout: '62%'
+        }
+    });
+
+    chartSummaryEl.innerHTML = categories.slice(0, 4).map(c => {
+        const amt = categoryTotals[c];
+        const pct = ((amt / totalExpense) * 100).toFixed(0);
+        const color = CATEGORY_COLORS[c] || '#94a3b8';
+        return `
+            <div class="chart-chip">
+                <span class="chart-chip-dot" style="background-color: ${color};"></span>
+                <span>${c}</span>
+                <strong>${formatCurrency(amt)}</strong>
+                <span style="color: #6b7280; font-size: 11px;">(${pct}%)</span>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderMonthlyChart(data) {
+    const monthlyMap = {};
+    data.forEach(t => {
+        const d = new Date(t.createdAt);
+        const key = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}`;
+        if (!monthlyMap[key]) monthlyMap[key] = { income: 0, expense: 0 };
+        if (t.category === 'income') monthlyMap[key].income += t.amount;
+        else if (t.category === 'expense') monthlyMap[key].expense += t.amount;
+    });
+
+    const months = Object.keys(monthlyMap).sort();
+    if (months.length === 0) {
+        chartSummaryEl.innerHTML = '<span style="color: #9ca3af;">データがありません</span>';
+        return;
+    }
+
+    const incomeValues = months.map(m => monthlyMap[m].income);
+    const expenseValues = months.map(m => monthlyMap[m].expense);
+
+    const ctx = analyticsChartEl.getContext('2d');
+    analyticsChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: months,
+            datasets: [
+                {
+                    label: '収入 (+)',
+                    data: incomeValues,
+                    backgroundColor: '#10b981',
+                    borderRadius: 4
+                },
+                {
+                    label: '支出 (-)',
+                    data: expenseValues,
+                    backgroundColor: '#ef4444',
+                    borderRadius: 4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(val) {
+                            return '¥' + val.toLocaleString();
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: { position: 'bottom' },
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx) {
+                            return ` ${ctx.dataset.label}: ${formatCurrency(ctx.raw)}`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    chartSummaryEl.innerHTML = `
+        <div style="font-size: 12px; color: #64748b; text-align: center; margin-top: 6px;">
+            月ごとの収入（緑）と支出（赤）の比較推移です
+        </div>
+    `;
+}
+
+// Chart tab listeners
+if (chartTabCategory && chartTabMonthly) {
+    chartTabCategory.addEventListener('click', () => {
+        chartTabCategory.classList.add('active');
+        chartTabMonthly.classList.remove('active');
+        currentChartTab = 'category';
+        renderCharts();
+    });
+    chartTabMonthly.addEventListener('click', () => {
+        chartTabMonthly.classList.add('active');
+        chartTabCategory.classList.remove('active');
+        currentChartTab = 'monthly';
+        renderCharts();
+    });
+}
+
+if (chartPeriodSelect) {
+    chartPeriodSelect.addEventListener('change', (e) => {
+        currentChartPeriod = e.target.value;
+        renderCharts();
+    });
 }
 
 // Settings Toggle
@@ -428,19 +671,10 @@ saveTokenBtn.addEventListener('click', async () => {
     showSyncStatus('同期が完了しました');
 });
 
-// Print (PDF Export) logic
-printBtn.addEventListener('click', () => {
-    const monthStr = reportMonthEl.value; // YYYY-MM
-    const typeVal = reportTypeEl.value;   // all, pasmo, cash
-    
-    if (!monthStr) {
-        alert('月を選択してください');
-        return;
-    }
-    
-    const [year, month] = monthStr.split('-');
-    
-    // Filter transactions by month and type
+// =========================================================
+// PDF Report Generation (iPhone & Desktop Compatible)
+// =========================================================
+function generateReportHTML(year, month, typeVal) {
     const targetTransactions = transactions.filter(t => {
         const d = new Date(t.createdAt);
         const y = String(d.getFullYear());
@@ -452,65 +686,152 @@ printBtn.addEventListener('click', () => {
         return true;
     });
     
-    // Sort chronological for the report (oldest to newest)
     const sortedForPrint = [...targetTransactions].sort((a, b) => a.createdAt - b.createdAt);
     
     let typeLabel = 'すべて';
-    if(typeVal === 'pasmo') typeLabel = 'PASMO';
-    if(typeVal === 'cash')  typeLabel = '現金';
-    
+    if (typeVal === 'pasmo') typeLabel = 'PASMO';
+    if (typeVal === 'cash')  typeLabel = '現金';
+
+    let totalIncome = 0;
+    let totalExpense = 0;
     let tableRows = '';
+
     sortedForPrint.forEach(t => {
         const d = new Date(t.createdAt);
-        // Format as MM/DD HH:mm
         const dateStr = `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-        
         const isExp = t.category === 'expense';
         
+        if (isExp) {
+            totalExpense += t.amount;
+        } else {
+            totalIncome += t.amount;
+        }
+
         const typeStr = t.type === 'pasmo' ? 'PASMO' : '現金';
         const sign = isExp ? '-' : '+';
         const colorStyle = isExp ? 'color: #ef4444;' : 'color: #10b981;';
         
         tableRows += `
             <tr>
-                <td>${dateStr}</td>
-                <td>${typeStr}</td>
-                <td>${t.memo}</td>
-                <td class="print-amount" style="${colorStyle}">${sign}${formatCurrency(t.amount)}</td>
+                <td style="padding: 8px 10px; border: 1px solid #e5e7eb;">${dateStr}</td>
+                <td style="padding: 8px 10px; border: 1px solid #e5e7eb;">${typeStr}</td>
+                <td style="padding: 8px 10px; border: 1px solid #e5e7eb;">${t.memo}</td>
+                <td style="padding: 8px 10px; border: 1px solid #e5e7eb; text-align: right; font-weight: 600; ${colorStyle}">${sign}${formatCurrency(t.amount)}</td>
             </tr>
         `;
     });
     
     if (sortedForPrint.length === 0) {
-        tableRows = '<tr><td colspan="4" style="text-align: center; padding: 20px;">この条件の履歴はありません</td></tr>';
+        tableRows = '<tr><td colspan="4" style="text-align: center; padding: 24px; border: 1px solid #e5e7eb; color: #9ca3af;">この条件の履歴はありません</td></tr>';
+    }
+
+    const balance = totalIncome - totalExpense;
+    const balanceColor = balance >= 0 ? '#10b981' : '#ef4444';
+
+    return `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 20px; color: #1f2937; background: #ffffff;">
+            <div style="text-align: center; border-bottom: 2px solid #2563eb; padding-bottom: 12px; margin-bottom: 16px;">
+                <h1 style="margin: 0 0 6px 0; font-size: 22px; color: #1e3a8a;">お小遣い記録レポート</h1>
+                <div style="font-size: 14px; color: #4b5563;">対象月: ${year}年${parseInt(month)}月 ｜ 決済方法: ${typeLabel}</div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; margin-bottom: 16px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 8px; font-size: 13px;">
+                <div>収入合計: <strong style="color: #10b981;">+${formatCurrency(totalIncome)}</strong></div>
+                <div>支出合計: <strong style="color: #ef4444;">-${formatCurrency(totalExpense)}</strong></div>
+                <div>収支差引: <strong style="color: ${balanceColor};">${formatCurrency(balance)}</strong></div>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                <thead>
+                    <tr style="background-color: #f1f5f9; text-align: left;">
+                        <th style="padding: 10px; border: 1px solid #cbd5e1; font-weight: 600;">日時</th>
+                        <th style="padding: 10px; border: 1px solid #cbd5e1; font-weight: 600;">方法</th>
+                        <th style="padding: 10px; border: 1px solid #cbd5e1; font-weight: 600;">メモ</th>
+                        <th style="padding: 10px; border: 1px solid #cbd5e1; font-weight: 600; text-align: right;">金額</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRows}
+                </tbody>
+            </table>
+
+            <div style="margin-top: 20px; text-align: right; font-size: 11px; color: #94a3b8;">
+                出力日時: ${new Date().toLocaleString('ja-JP')}
+            </div>
+        </div>
+    `;
+}
+
+// Download PDF directly (Recommended for iPhone / Mobile)
+if (downloadPdfBtn) {
+    downloadPdfBtn.addEventListener('click', async () => {
+        const monthStr = reportMonthEl.value;
+        const typeVal = reportTypeEl.value;
+        
+        if (!monthStr) {
+            alert('月を選択してください');
+            return;
+        }
+        
+        const [year, month] = monthStr.split('-');
+        const reportContent = generateReportHTML(year, month, typeVal);
+
+        // Create temporary visible container for high quality capture
+        const tempContainer = document.createElement('div');
+        tempContainer.innerHTML = reportContent;
+        tempContainer.style.position = 'fixed';
+        tempContainer.style.left = '-9999px';
+        tempContainer.style.top = '0';
+        tempContainer.style.width = '700px';
+        document.body.appendChild(tempContainer);
+
+        showLoading(true);
+
+        try {
+            if (typeof html2pdf !== 'undefined') {
+                const opt = {
+                    margin:       [8, 8, 8, 8],
+                    filename:     `お小遣いレポート_${year}年${parseInt(month)}月.pdf`,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                await html2pdf().set(opt).from(tempContainer).save();
+            } else {
+                // Fallback to window.print() if html2pdf CDN is blocked
+                printArea.innerHTML = reportContent;
+                window.print();
+            }
+        } catch (err) {
+            console.error('PDF生成エラー:', err);
+            alert('PDFの作成に失敗しました: ' + err.message);
+        } finally {
+            if (document.body.contains(tempContainer)) {
+                document.body.removeChild(tempContainer);
+            }
+            showLoading(false);
+        }
+    });
+}
+
+// Traditional Print dialog (AirPrint compatible)
+printBtn.addEventListener('click', () => {
+    const monthStr = reportMonthEl.value;
+    const typeVal = reportTypeEl.value;
+    
+    if (!monthStr) {
+        alert('月を選択してください');
+        return;
     }
     
-    const html = `
-        <div class="print-header">
-            <h2>お小遣い記録レポート (${year}年${parseInt(month)}月) - ${typeLabel}</h2>
-        </div>
-        <table class="print-table">
-            <thead>
-                <tr>
-                    <th>日時</th>
-                    <th>支払い方法</th>
-                    <th>メモ</th>
-                    <th class="print-amount">金額</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${tableRows}
-            </tbody>
-        </table>
-    `;
+    const [year, month] = monthStr.split('-');
+    printArea.innerHTML = generateReportHTML(year, month, typeVal);
     
-    printArea.innerHTML = html;
-    
-    // Wait briefly for DOM render before opening print dialog
-    setTimeout(() => {
-        window.print();
-    }, 100);
+    // Call print immediately without timeout for iOS Safari compatibility
+    window.print();
 });
 
 // Start app
 init();
+
