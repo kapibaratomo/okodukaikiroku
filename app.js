@@ -821,8 +821,14 @@ async function triggerPdfDownload() {
         if (!contentEl) throw new Error('レポート要素が見つかりません');
 
         if (typeof html2pdf !== 'undefined') {
+            // Remove shadows temporarily for clean A4 full-width PDF
+            const originalShadow = contentEl.style.boxShadow;
+            const originalBorder = contentEl.style.border;
+            contentEl.style.boxShadow = 'none';
+            contentEl.style.border = 'none';
+
             const opt = {
-                margin:       [8, 8, 8, 8],
+                margin:       [10, 10, 10, 10],
                 filename:     `お小遣いレポート_${year}年${parseInt(month)}月.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true, scrollY: 0, scrollX: 0 },
@@ -830,6 +836,9 @@ async function triggerPdfDownload() {
             };
 
             await html2pdf().set(opt).from(contentEl).save();
+
+            contentEl.style.boxShadow = originalShadow;
+            contentEl.style.border = originalBorder;
         } else {
             window.print();
         }
