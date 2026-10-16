@@ -19,12 +19,15 @@ const saveTokenBtn = document.getElementById('saveTokenBtn');
 const syncStatus = document.getElementById('syncStatus');
 const loadingOverlay = document.getElementById('loadingOverlay');
 
-// New PDF Export DOM Elements
+// PDF & Report Modal DOM Elements
 const reportMonthEl = document.getElementById('reportMonth');
 const reportTypeEl = document.getElementById('reportType');
-const printBtn = document.getElementById('printBtn');
-const downloadPdfBtn = document.getElementById('downloadPdfBtn');
-const printArea = document.getElementById('printArea');
+const openReportModalBtn = document.getElementById('openReportModalBtn');
+const reportModal = document.getElementById('reportModal');
+const closeModalBtn = document.getElementById('closeModalBtn');
+const modalDownloadPdfBtn = document.getElementById('modalDownloadPdfBtn');
+const modalPrintBtn = document.getElementById('modalPrintBtn');
+const reportPrintContent = document.getElementById('reportPrintContent');
 
 // Analytics & Chart Elements
 const chartTabCategory = document.getElementById('chartTabCategory');
@@ -762,9 +765,13 @@ function generateReportHTML(year, month, typeVal) {
     `;
 }
 
-// Download PDF directly (Recommended for iPhone / Mobile)
-if (downloadPdfBtn) {
-    downloadPdfBtn.addEventListener('click', async () => {
+// =========================================================
+// Report Modal & PDF / Print Handlers (iPhone & Windows)
+// =========================================================
+
+// Open Modal with Report Preview
+if (openReportModalBtn) {
+    openReportModalBtn.addEventListener('click', () => {
         const monthStr = reportMonthEl.value;
         const typeVal = reportTypeEl.value;
         
@@ -774,16 +781,31 @@ if (downloadPdfBtn) {
         }
         
         const [year, month] = monthStr.split('-');
-        const reportContent = generateReportHTML(year, month, typeVal);
+        reportPrintContent.innerHTML = generateReportHTML(year, month, typeVal);
+        reportModal.classList.remove('hidden');
+    });
+}
 
-        // Create temporary visible container for high quality capture
-        const tempContainer = document.createElement('div');
-        tempContainer.innerHTML = reportContent;
-        tempContainer.style.position = 'fixed';
-        tempContainer.style.left = '-9999px';
-        tempContainer.style.top = '0';
-        tempContainer.style.width = '700px';
-        document.body.appendChild(tempContainer);
+// Close Modal Handlers
+if (closeModalBtn) {
+    closeModalBtn.addEventListener('click', () => {
+        reportModal.classList.add('hidden');
+    });
+}
+
+if (reportModal) {
+    reportModal.addEventListener('click', (e) => {
+        if (e.target === reportModal) {
+            reportModal.classList.add('hidden');
+        }
+    });
+}
+
+// Save as PDF (Direct download for iPhone & PC, completely visible DOM capture)
+if (modalDownloadPdfBtn) {
+    modalDownloadPdfBtn.addEventListener('click', async () => {
+        const monthStr = reportMonthEl.value;
+        const [year, month] = monthStr.split('-');
 
         showLoading(true);
 
@@ -793,44 +815,33 @@ if (downloadPdfBtn) {
                     margin:       [8, 8, 8, 8],
                     filename:     `お小遣いレポート_${year}年${parseInt(month)}月.pdf`,
                     image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+                    html2canvas:  { scale: 2, useCORS: true, scrollY: 0, scrollX: 0 },
                     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
-                await html2pdf().set(opt).from(tempContainer).save();
+                // Capture directly from visible modal content
+                await html2pdf().set(opt).from(reportPrintContent).save();
             } else {
-                // Fallback to window.print() if html2pdf CDN is blocked
-                printArea.innerHTML = reportContent;
                 window.print();
             }
         } catch (err) {
             console.error('PDF生成エラー:', err);
             alert('PDFの作成に失敗しました: ' + err.message);
         } finally {
-            if (document.body.contains(tempContainer)) {
-                document.body.removeChild(tempContainer);
-            }
             showLoading(false);
         }
     });
 }
 
-// Traditional Print dialog (AirPrint compatible)
-printBtn.addEventListener('click', () => {
-    const monthStr = reportMonthEl.value;
-    const typeVal = reportTypeEl.value;
-    
-    if (!monthStr) {
-        alert('月を選択してください');
-        return;
-    }
-    
-    const [year, month] = monthStr.split('-');
-    printArea.innerHTML = generateReportHTML(year, month, typeVal);
-    
-    // Call print immediately without timeout for iOS Safari compatibility
-    window.print();
-});
+// Print Handler (Full Windows Chrome/Edge and iOS AirPrint support)
+if (modalPrintBtn) {
+    modalPrintBtn.addEventListener('click', () => {
+        // Allow brief DOM paint before launching print dialog
+        setTimeout(() => {
+            window.print();
+        }, 150);
+    });
+}
 
 // Start app
 init();
