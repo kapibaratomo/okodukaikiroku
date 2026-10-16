@@ -769,79 +769,120 @@ function generateReportHTML(year, month, typeVal) {
 // Report Modal & PDF / Print Handlers (iPhone & Windows)
 // =========================================================
 
-// Open Modal with Report Preview
-if (openReportModalBtn) {
-    openReportModalBtn.addEventListener('click', () => {
-        const monthStr = reportMonthEl.value;
-        const typeVal = reportTypeEl.value;
+function openReportModal() {
+    try {
+        const monthStr = reportMonthEl ? reportMonthEl.value : '';
+        const typeVal = reportTypeEl ? reportTypeEl.value : 'all';
         
-        if (!monthStr) {
-            alert('月を選択してください');
-            return;
+        const now = new Date();
+        const fallbackYear = String(now.getFullYear());
+        const fallbackMonth = String(now.getMonth() + 1).padStart(2, '0');
+        
+        let year = fallbackYear;
+        let month = fallbackMonth;
+        
+        if (monthStr && monthStr.includes('-')) {
+            const parts = monthStr.split('-');
+            year = parts[0];
+            month = parts[1];
         }
         
-        const [year, month] = monthStr.split('-');
-        reportPrintContent.innerHTML = generateReportHTML(year, month, typeVal);
-        reportModal.classList.remove('hidden');
-    });
-}
-
-// Close Modal Handlers
-if (closeModalBtn) {
-    closeModalBtn.addEventListener('click', () => {
-        reportModal.classList.add('hidden');
-    });
-}
-
-if (reportModal) {
-    reportModal.addEventListener('click', (e) => {
-        if (e.target === reportModal) {
-            reportModal.classList.add('hidden');
+        const targetPrintArea = document.getElementById('reportPrintContent');
+        if (targetPrintArea) {
+            targetPrintArea.innerHTML = generateReportHTML(year, month, typeVal);
         }
-    });
-}
-
-// Save as PDF (Direct download for iPhone & PC, completely visible DOM capture)
-if (modalDownloadPdfBtn) {
-    modalDownloadPdfBtn.addEventListener('click', async () => {
-        const monthStr = reportMonthEl.value;
-        const [year, month] = monthStr.split('-');
-
-        showLoading(true);
-
-        try {
-            if (typeof html2pdf !== 'undefined') {
-                const opt = {
-                    margin:       [8, 8, 8, 8],
-                    filename:     `お小遣いレポート_${year}年${parseInt(month)}月.pdf`,
-                    image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true, scrollY: 0, scrollX: 0 },
-                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                };
-
-                // Capture directly from visible modal content
-                await html2pdf().set(opt).from(reportPrintContent).save();
-            } else {
-                window.print();
-            }
-        } catch (err) {
-            console.error('PDF生成エラー:', err);
-            alert('PDFの作成に失敗しました: ' + err.message);
-        } finally {
-            showLoading(false);
+        
+        const targetModal = document.getElementById('reportModal');
+        if (targetModal) {
+            targetModal.classList.remove('hidden');
+            targetModal.style.display = 'flex';
         }
-    });
+    } catch (err) {
+        console.error('モーダル展開エラー:', err);
+        alert('レポートの表示中にエラーが発生しました: ' + err.message);
+    }
 }
 
-// Print Handler (Full Windows Chrome/Edge and iOS AirPrint support)
-if (modalPrintBtn) {
-    modalPrintBtn.addEventListener('click', () => {
-        // Allow brief DOM paint before launching print dialog
-        setTimeout(() => {
+function closeReportModal() {
+    const targetModal = document.getElementById('reportModal');
+    if (targetModal) {
+        targetModal.classList.add('hidden');
+        targetModal.style.display = 'none';
+    }
+}
+
+async function triggerPdfDownload() {
+    showLoading(true);
+    try {
+        const monthStr = reportMonthEl ? reportMonthEl.value : '';
+        const [year, month] = (monthStr && monthStr.includes('-')) ? monthStr.split('-') : [new Date().getFullYear(), String(new Date().getMonth() + 1).padStart(2, '0')];
+        const contentEl = document.getElementById('reportPrintContent');
+
+        if (!contentEl) throw new Error('レポート要素が見つかりません');
+
+        if (typeof html2pdf !== 'undefined') {
+            const opt = {
+                margin:       [8, 8, 8, 8],
+                filename:     `お小遣いレポート_${year}年${parseInt(month)}月.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, scrollY: 0, scrollX: 0 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            await html2pdf().set(opt).from(contentEl).save();
+        } else {
             window.print();
-        }, 150);
-    });
+        }
+    } catch (err) {
+        console.error('PDF生成エラー:', err);
+        alert('PDFの作成に失敗しました: ' + err.message);
+    } finally {
+        showLoading(false);
+    }
 }
+
+function triggerPrint() {
+    setTimeout(() => {
+        window.print();
+    }, 150);
+}
+
+// Global Click Delegation (Resilient to cache mismatches & dynamic DOM)
+document.addEventListener('click', (e) => {
+    // Open report modal (handles both new and legacy button IDs)
+    if (e.target.closest('#openReportModalBtn') || e.target.closest('#downloadPdfBtn') || e.target.closest('#printBtn')) {
+        e.preventDefault();
+        openReportModal();
+        return;
+    }
+
+    // Close report modal
+    if (e.target.closest('#closeModalBtn')) {
+        e.preventDefault();
+        closeReportModal();
+        return;
+    }
+
+    // Background click to close modal
+    if (e.target.id === 'reportModal') {
+        closeReportModal();
+        return;
+    }
+
+    // Modal action: Download PDF
+    if (e.target.closest('#modalDownloadPdfBtn')) {
+        e.preventDefault();
+        triggerPdfDownload();
+        return;
+    }
+
+    // Modal action: Print
+    if (e.target.closest('#modalPrintBtn')) {
+        e.preventDefault();
+        triggerPrint();
+        return;
+    }
+});
 
 // Start app
 init();
