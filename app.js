@@ -699,7 +699,7 @@ function generateReportHTML(year, month, typeVal) {
     let totalExpense = 0;
     let tableRows = '';
 
-    sortedForPrint.forEach(t => {
+    sortedForPrint.forEach((t, index) => {
         const d = new Date(t.createdAt);
         const dateStr = `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
         const isExp = t.category === 'expense';
@@ -712,45 +712,55 @@ function generateReportHTML(year, month, typeVal) {
 
         const typeStr = t.type === 'pasmo' ? 'PASMO' : '現金';
         const sign = isExp ? '-' : '+';
-        const colorStyle = isExp ? 'color: #ef4444;' : 'color: #10b981;';
+        const colorStyle = isExp ? 'color: #dc2626;' : 'color: #059669;';
+        const rowBg = index % 2 === 1 ? 'background-color: #f8fafc;' : 'background-color: #ffffff;';
         
         tableRows += `
-            <tr>
-                <td style="padding: 8px 10px; border: 1px solid #e5e7eb;">${dateStr}</td>
-                <td style="padding: 8px 10px; border: 1px solid #e5e7eb;">${typeStr}</td>
-                <td style="padding: 8px 10px; border: 1px solid #e5e7eb;">${t.memo}</td>
-                <td style="padding: 8px 10px; border: 1px solid #e5e7eb; text-align: right; font-weight: 600; ${colorStyle}">${sign}${formatCurrency(t.amount)}</td>
+            <tr style="${rowBg}">
+                <td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #475569;">${dateStr}</td>
+                <td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #475569;">${typeStr}</td>
+                <td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; font-size: 14px; font-weight: 500; color: #1e293b;">${t.memo}</td>
+                <td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 700; font-size: 15px; ${colorStyle}">${sign}${formatCurrency(t.amount)}</td>
             </tr>
         `;
     });
     
     if (sortedForPrint.length === 0) {
-        tableRows = '<tr><td colspan="4" style="text-align: center; padding: 24px; border: 1px solid #e5e7eb; color: #9ca3af;">この条件の履歴はありません</td></tr>';
+        tableRows = '<tr><td colspan="4" style="text-align: center; padding: 32px; border-bottom: 1px solid #e2e8f0; color: #94a3b8; font-size: 14px;">この条件の履歴はありません</td></tr>';
     }
 
     const balance = totalIncome - totalExpense;
-    const balanceColor = balance >= 0 ? '#10b981' : '#ef4444';
+    const balanceColor = balance >= 0 ? '#15803d' : '#b91c1c';
 
     return `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 20px; color: #1f2937; background: #ffffff;">
-            <div style="text-align: center; border-bottom: 2px solid #2563eb; padding-bottom: 12px; margin-bottom: 16px;">
-                <h1 style="margin: 0 0 6px 0; font-size: 22px; color: #1e3a8a;">お小遣い記録レポート</h1>
-                <div style="font-size: 14px; color: #4b5563;">対象月: ${year}年${parseInt(month)}月 ｜ 決済方法: ${typeLabel}</div>
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif; width: 100%; box-sizing: border-box; color: #1e293b; background: #ffffff;">
+            <div style="text-align: center; border-bottom: 2px solid #2563eb; padding-bottom: 14px; margin-bottom: 20px;">
+                <h1 style="margin: 0 0 6px 0; font-size: 24px; color: #1e3a8a; letter-spacing: 0.05em;">お小遣い記録レポート</h1>
+                <div style="font-size: 14px; color: #64748b;">対象月: <strong>${year}年${parseInt(month)}月</strong> ｜ 決済方法: <strong>${typeLabel}</strong></div>
             </div>
             
-            <div style="display: flex; justify-content: space-between; margin-bottom: 16px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 8px; font-size: 13px;">
-                <div>収入合計: <strong style="color: #10b981;">+${formatCurrency(totalIncome)}</strong></div>
-                <div>支出合計: <strong style="color: #ef4444;">-${formatCurrency(totalExpense)}</strong></div>
-                <div>収支差引: <strong style="color: ${balanceColor};">${formatCurrency(balance)}</strong></div>
+            <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+                <div style="flex: 1; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; text-align: center;">
+                    <div style="font-size: 12px; color: #166534; font-weight: 600; margin-bottom: 4px;">収入合計</div>
+                    <div style="font-size: 18px; color: #15803d; font-weight: 700;">+${formatCurrency(totalIncome)}</div>
+                </div>
+                <div style="flex: 1; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 12px 16px; text-align: center;">
+                    <div style="font-size: 12px; color: #991b1b; font-weight: 600; margin-bottom: 4px;">支出合計</div>
+                    <div style="font-size: 18px; color: #b91c1c; font-weight: 700;">-${formatCurrency(totalExpense)}</div>
+                </div>
+                <div style="flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; text-align: center;">
+                    <div style="font-size: 12px; color: #475569; font-weight: 600; margin-bottom: 4px;">収支差引</div>
+                    <div style="font-size: 18px; color: ${balanceColor}; font-weight: 700;">${formatCurrency(balance)}</div>
+                </div>
             </div>
 
-            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
                 <thead>
-                    <tr style="background-color: #f1f5f9; text-align: left;">
-                        <th style="padding: 10px; border: 1px solid #cbd5e1; font-weight: 600;">日時</th>
-                        <th style="padding: 10px; border: 1px solid #cbd5e1; font-weight: 600;">方法</th>
-                        <th style="padding: 10px; border: 1px solid #cbd5e1; font-weight: 600;">メモ</th>
-                        <th style="padding: 10px; border: 1px solid #cbd5e1; font-weight: 600; text-align: right;">金額</th>
+                    <tr style="background-color: #f1f5f9; border-top: 2px solid #cbd5e1; border-bottom: 2px solid #cbd5e1;">
+                        <th style="padding: 12px 14px; font-weight: 600; font-size: 14px; text-align: left; width: 22%; color: #334155;">日時</th>
+                        <th style="padding: 12px 14px; font-weight: 600; font-size: 14px; text-align: left; width: 18%; color: #334155;">方法</th>
+                        <th style="padding: 12px 14px; font-weight: 600; font-size: 14px; text-align: left; width: 38%; color: #334155;">メモ</th>
+                        <th style="padding: 12px 14px; font-weight: 600; font-size: 14px; text-align: right; width: 22%; color: #334155;">金額</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -758,7 +768,7 @@ function generateReportHTML(year, month, typeVal) {
                 </tbody>
             </table>
 
-            <div style="margin-top: 20px; text-align: right; font-size: 11px; color: #94a3b8;">
+            <div style="margin-top: 24px; text-align: right; font-size: 12px; color: #94a3b8;">
                 出力日時: ${new Date().toLocaleString('ja-JP')}
             </div>
         </div>
@@ -811,34 +821,56 @@ function closeReportModal() {
     }
 }
 
+// Full A4-width PDF Generation (Mobile & PC)
 async function triggerPdfDownload() {
     showLoading(true);
+    let printWrapper = null;
     try {
         const monthStr = reportMonthEl ? reportMonthEl.value : '';
-        const [year, month] = (monthStr && monthStr.includes('-')) ? monthStr.split('-') : [new Date().getFullYear(), String(new Date().getMonth() + 1).padStart(2, '0')];
-        const contentEl = document.getElementById('reportPrintContent');
+        const typeVal = reportTypeEl ? reportTypeEl.value : 'all';
+        const now = new Date();
+        const fallbackYear = String(now.getFullYear());
+        const fallbackMonth = String(now.getMonth() + 1).padStart(2, '0');
+        
+        let year = fallbackYear;
+        let month = fallbackMonth;
+        if (monthStr && monthStr.includes('-')) {
+            const parts = monthStr.split('-');
+            year = parts[0];
+            month = parts[1];
+        }
 
-        if (!contentEl) throw new Error('レポート要素が見つかりません');
+        // Create an optimal full-width A4 capture wrapper (750px)
+        printWrapper = document.createElement('div');
+        printWrapper.style.position = 'fixed';
+        printWrapper.style.top = '0';
+        printWrapper.style.left = '0';
+        printWrapper.style.width = '750px';
+        printWrapper.style.backgroundColor = '#ffffff';
+        printWrapper.style.zIndex = '99998'; // Below loading overlay, completely visible to canvas
+        printWrapper.style.padding = '10px 15px';
+        printWrapper.style.boxSizing = 'border-box';
+        printWrapper.innerHTML = generateReportHTML(year, month, typeVal);
+
+        document.body.appendChild(printWrapper);
 
         if (typeof html2pdf !== 'undefined') {
-            // Remove shadows temporarily for clean A4 full-width PDF
-            const originalShadow = contentEl.style.boxShadow;
-            const originalBorder = contentEl.style.border;
-            contentEl.style.boxShadow = 'none';
-            contentEl.style.border = 'none';
-
             const opt = {
-                margin:       [10, 10, 10, 10],
+                margin:       [8, 8, 8, 8],
                 filename:     `お小遣いレポート_${year}年${parseInt(month)}月.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, scrollY: 0, scrollX: 0 },
+                html2canvas:  {
+                    scale: 2,
+                    useCORS: true,
+                    scrollY: 0,
+                    scrollX: 0,
+                    width: 750,
+                    windowWidth: 750
+                },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            await html2pdf().set(opt).from(contentEl).save();
-
-            contentEl.style.boxShadow = originalShadow;
-            contentEl.style.border = originalBorder;
+            await html2pdf().set(opt).from(printWrapper).save();
         } else {
             window.print();
         }
@@ -846,6 +878,9 @@ async function triggerPdfDownload() {
         console.error('PDF生成エラー:', err);
         alert('PDFの作成に失敗しました: ' + err.message);
     } finally {
+        if (printWrapper && document.body.contains(printWrapper)) {
+            document.body.removeChild(printWrapper);
+        }
         showLoading(false);
     }
 }
