@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>お小遣い記録</title>
-    <link rel="stylesheet" href="style.css?v=20261016_5">
+    <link rel="stylesheet" href="style.css?v=20261018_1">
     <!-- Chart.js and html2pdf.js for graphs and iPhone PDF export -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -170,17 +170,21 @@
         <section class="analytics-card">
             <div class="analytics-header">
                 <h2>📊 収支・支出グラフ</h2>
-                <div class="chart-controls">
-                    <div class="chart-tab-group">
-                        <button id="chartTabCategory" class="chart-tab active" data-tab="category">内訳</button>
-                        <button id="chartTabMonthly" class="chart-tab" data-tab="monthly">推移</button>
-                    </div>
-                    <select id="chartPeriodSelect" class="chart-period-select">
-                        <option value="month">今月</option>
-                        <option value="all" selected>全期間</option>
-                    </select>
+                <div class="chart-tab-group">
+                    <button id="chartTabCategory" class="chart-tab active" data-tab="category">内訳</button>
+                    <button id="chartTabMonthly" class="chart-tab" data-tab="monthly">月別推移</button>
                 </div>
             </div>
+            
+            <!-- 各月切り替えナビゲーション -->
+            <div id="chartMonthNav" class="chart-month-nav">
+                <button id="chartPrevMonthBtn" type="button" class="month-nav-btn" title="前月へ">◀</button>
+                <select id="chartPeriodSelect" class="chart-period-select">
+                    <!-- 動的に月が追加されます -->
+                </select>
+                <button id="chartNextMonthBtn" type="button" class="month-nav-btn" title="次月へ">▶</button>
+            </div>
+
             <div class="chart-wrapper">
                 <canvas id="analyticsChart"></canvas>
             </div>
@@ -267,7 +271,7 @@
         </div>
     </div>
 
-    <script src="config.js?v=20261016_5"></script>
-    <script src="app.js?v=20261016_5"></script>
+    <script src="config.js?v=20261018_1"></script>
+    <script src="app.js?v=20261018_1"></script>
 </body>
 </html>

@@ -32,12 +32,15 @@ const reportPrintContent = document.getElementById('reportPrintContent');
 // Analytics & Chart Elements
 const chartTabCategory = document.getElementById('chartTabCategory');
 const chartTabMonthly = document.getElementById('chartTabMonthly');
+const chartMonthNav = document.getElementById('chartMonthNav');
+const chartPrevMonthBtn = document.getElementById('chartPrevMonthBtn');
+const chartNextMonthBtn = document.getElementById('chartNextMonthBtn');
 const chartPeriodSelect = document.getElementById('chartPeriodSelect');
 const analyticsChartEl = document.getElementById('analyticsChart');
 const chartSummaryEl = document.getElementById('chartSummary');
 let analyticsChart = null;
 let currentChartTab = 'category';
-let currentChartPeriod = 'all';
+let currentChartPeriod = '';
 
 // Helper: get today's date string (YYYY-MM-DD)
 function getTodayStr() {
@@ -419,11 +422,12 @@ function updateUI(filterType) {
     transactions.sort((a, b) => b.createdAt - a.createdAt);
     calculateBalances();
     renderHistory(filterType);
+    updateChartPeriodOptions();
     renderCharts();
 }
 
 // =========================================================
-// Category Classification & Chart.js Analytics
+// Category Classification & Chart.js Analytics (Monthly Supported)
 // =========================================================
 const CATEGORY_COLORS = {
     '交通費': '#3b82f6',         // 青
@@ -446,19 +450,71 @@ function classifyCategory(memo) {
     return 'その他';
 }
 
+// Update the Month Select dropdown dynamically based on transactions
+function updateChartPeriodOptions() {
+    if (!chartPeriodSelect) return;
+
+    const monthsSet = new Set();
+    transactions.forEach(t => {
+        const d = new Date(t.createdAt);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        monthsSet.add(`${y}-${m}`);
+    });
+
+    const sortedMonths = Array.from(monthsSet).sort().reverse(); // Newest first
+
+    const currentVal = chartPeriodSelect.value;
+    let optionsHtml = '';
+
+    sortedMonths.forEach(ym => {
+        const [y, m] = ym.split('-');
+        optionsHtml += `<option value="${ym}">${y}年${parseInt(m)}月</option>`;
+    });
+    optionsHtml += `<option value="all">全期間</option>`;
+
+    chartPeriodSelect.innerHTML = optionsHtml;
+
+    // Preserve selection or default to the latest month
+    if (currentVal && (sortedMonths.includes(currentVal) || currentVal === 'all')) {
+        chartPeriodSelect.value = currentVal;
+    } else if (sortedMonths.length > 0) {
+        chartPeriodSelect.value = sortedMonths[0]; // Default to latest month (各月)
+    } else {
+        chartPeriodSelect.value = 'all';
+    }
+
+    currentChartPeriod = chartPeriodSelect.value;
+    updateNavButtonsState();
+}
+
+function updateNavButtonsState() {
+    if (!chartPeriodSelect || !chartPrevMonthBtn || !chartNextMonthBtn) return;
+    const idx = chartPeriodSelect.selectedIndex;
+    const total = chartPeriodSelect.options.length;
+
+    // ◀ (Older month: higher index, up to second to last)
+    chartPrevMonthBtn.disabled = idx >= total - 2;
+
+    // ▶ (Newer month: lower index, down to 0)
+    chartNextMonthBtn.disabled = idx <= 0;
+}
+
 function renderCharts() {
     if (typeof Chart === 'undefined' || !analyticsChartEl) return;
 
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth();
-
     let filteredTransactions = transactions;
-    if (currentChartPeriod === 'month') {
+    let periodTitle = '全期間';
+
+    if (currentChartPeriod && currentChartPeriod !== 'all' && currentChartPeriod.includes('-')) {
+        const [targetYear, targetMonth] = currentChartPeriod.split('-');
         filteredTransactions = transactions.filter(t => {
             const d = new Date(t.createdAt);
-            return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+            const y = String(d.getFullYear());
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            return y === targetYear && m === targetMonth;
         });
+        periodTitle = `${targetYear}年${parseInt(targetMonth)}月`;
     }
 
     if (analyticsChart) {
@@ -467,29 +523,44 @@ function renderCharts() {
     }
 
     if (currentChartTab === 'category') {
-        renderCategoryChart(filteredTransactions);
+        renderCategoryChart(filteredTransactions, periodTitle);
     } else {
-        renderMonthlyChart(filteredTransactions);
+        renderMonthlyChart(transactions);
     }
 }
 
-function renderCategoryChart(data) {
+function renderCategoryChart(data, periodTitle) {
     const expenseData = data.filter(t => t.category === 'expense');
-    const categoryTotals = {};
+    const incomeData = data.filter(t => t.category === 'income');
+    
     let totalExpense = 0;
+    let totalIncome = 0;
+    expenseData.forEach(t => totalExpense += t.amount);
+    incomeData.forEach(t => totalIncome += t.amount);
 
+    const categoryTotals = {};
     expenseData.forEach(t => {
         const cat = classifyCategory(t.memo);
         categoryTotals[cat] = (categoryTotals[cat] || 0) + t.amount;
-        totalExpense += t.amount;
     });
 
     const categories = Object.keys(categoryTotals).sort((a, b) => categoryTotals[b] - categoryTotals[a]);
     const values = categories.map(c => categoryTotals[c]);
     const bgColors = categories.map(c => CATEGORY_COLORS[c] || '#94a3b8');
 
+    // Header info under chart
+    const headerInfo = `
+        <div style="width: 100%; text-align: center; margin-bottom: 8px; font-size: 13px; color: #475569;">
+            <strong>${periodTitle}</strong> の支出合計: <strong style="color: #ef4444;">${formatCurrency(totalExpense)}</strong>
+            ${totalIncome > 0 ? ` (収入: <span style="color: #10b981;">+${formatCurrency(totalIncome)}</span>)` : ''}
+        </div>
+    `;
+
     if (values.length === 0) {
-        chartSummaryEl.innerHTML = '<span style="color: #9ca3af;">支出データがありません</span>';
+        chartSummaryEl.innerHTML = `
+            ${headerInfo}
+            <div style="color: #9ca3af; font-size: 13px; margin-top: 10px;">この期間の支出データはありません</div>
+        `;
         const ctx = analyticsChartEl.getContext('2d');
         analyticsChart = new Chart(ctx, {
             type: 'doughnut',
@@ -527,7 +598,7 @@ function renderCategoryChart(data) {
             plugins: {
                 legend: {
                     position: 'bottom',
-                    labels: { boxWidth: 12, font: { size: 12 }, padding: 12 }
+                    labels: { boxWidth: 12, font: { size: 12 }, padding: 10 }
                 },
                 tooltip: {
                     callbacks: {
@@ -543,7 +614,7 @@ function renderCategoryChart(data) {
         }
     });
 
-    chartSummaryEl.innerHTML = categories.slice(0, 4).map(c => {
+    const chipsHtml = categories.map(c => {
         const amt = categoryTotals[c];
         const pct = ((amt / totalExpense) * 100).toFixed(0);
         const color = CATEGORY_COLORS[c] || '#94a3b8';
@@ -556,6 +627,8 @@ function renderCategoryChart(data) {
             </div>
         `;
     }).join('');
+
+    chartSummaryEl.innerHTML = headerInfo + chipsHtml;
 }
 
 function renderMonthlyChart(data) {
@@ -636,20 +709,49 @@ if (chartTabCategory && chartTabMonthly) {
         chartTabCategory.classList.add('active');
         chartTabMonthly.classList.remove('active');
         currentChartTab = 'category';
+        if (chartMonthNav) chartMonthNav.style.display = 'flex';
         renderCharts();
     });
     chartTabMonthly.addEventListener('click', () => {
         chartTabMonthly.classList.add('active');
         chartTabCategory.classList.remove('active');
         currentChartTab = 'monthly';
+        if (chartMonthNav) chartMonthNav.style.display = 'none';
         renderCharts();
     });
 }
 
+// Month Navigation Listeners
 if (chartPeriodSelect) {
     chartPeriodSelect.addEventListener('change', (e) => {
         currentChartPeriod = e.target.value;
+        updateNavButtonsState();
         renderCharts();
+    });
+}
+
+if (chartPrevMonthBtn) {
+    chartPrevMonthBtn.addEventListener('click', () => {
+        if (!chartPeriodSelect) return;
+        const total = chartPeriodSelect.options.length;
+        if (chartPeriodSelect.selectedIndex < total - 2) {
+            chartPeriodSelect.selectedIndex++;
+            currentChartPeriod = chartPeriodSelect.value;
+            updateNavButtonsState();
+            renderCharts();
+        }
+    });
+}
+
+if (chartNextMonthBtn) {
+    chartNextMonthBtn.addEventListener('click', () => {
+        if (!chartPeriodSelect) return;
+        if (chartPeriodSelect.selectedIndex > 0) {
+            chartPeriodSelect.selectedIndex--;
+            currentChartPeriod = chartPeriodSelect.value;
+            updateNavButtonsState();
+            renderCharts();
+        }
     });
 }
 
