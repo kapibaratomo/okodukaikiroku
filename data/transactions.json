@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "tuu10ux4n",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 272,
+      "memo": "国際展示場~品川シーサイド",
+      "createdAt": 1793156400000
+    },
+    {
       "id": "4qwozpo4v",
       "type": "pasmo",
       "category": "expense",
