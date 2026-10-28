@@ -25,6 +25,14 @@
       "createdAt": 1792897200000
     },
     {
+      "id": "kpwl4cblf",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 253,
+      "memo": "秋葉原~東中野",
+      "createdAt": 1792033200000
+    },
+    {
       "id": "gfdunvris",
       "type": "pasmo",
       "category": "expense",
