@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "gfdunvris",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 253,
+      "memo": "大井町~秋葉原",
+      "createdAt": 1793156400000
+    },
+    {
       "id": "uwidl3tyi",
       "type": "pasmo",
       "category": "expense",
