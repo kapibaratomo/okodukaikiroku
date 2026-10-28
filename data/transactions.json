@@ -9,6 +9,14 @@
       "createdAt": 1792897200000
     },
     {
+      "id": "gwhlesece",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 200,
+      "memo": "駐輪場",
+      "createdAt": 1792810800000
+    },
+    {
       "id": "vk1zit0ii",
       "type": "pasmo",
       "category": "expense",
