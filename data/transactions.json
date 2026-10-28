@@ -9,6 +9,14 @@
       "createdAt": 1792897200000
     },
     {
+      "id": "8yqku4dqs",
+      "type": "pasmo",
+      "category": "income",
+      "amount": 5000,
+      "memo": "チャージ",
+      "createdAt": 1792724400000
+    },
+    {
       "id": "zcqusch4u",
       "type": "pasmo",
       "category": "expense",
