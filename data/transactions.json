@@ -25,6 +25,14 @@
       "createdAt": 1792897200000
     },
     {
+      "id": "kr2kj5b20",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 189,
+      "memo": "新豊洲~有明",
+      "createdAt": 1792033200000
+    },
+    {
       "id": "tjt4mwvm7",
       "type": "pasmo",
       "category": "expense",
