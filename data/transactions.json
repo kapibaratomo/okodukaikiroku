@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "uwidl3tyi",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 210,
+      "memo": "品川シーサイド~大井町",
+      "createdAt": 1793156400000
+    },
+    {
       "id": "tuu10ux4n",
       "type": "pasmo",
       "category": "expense",
