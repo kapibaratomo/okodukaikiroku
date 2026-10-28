@@ -9,14 +9,6 @@
       "createdAt": 1793156400000
     },
     {
-      "id": "uwidl3tyi",
-      "type": "pasmo",
-      "category": "expense",
-      "amount": 210,
-      "memo": "品川シーサイド~大井町",
-      "createdAt": 1793156400000
-    },
-    {
       "id": "4qwozpo4v",
       "type": "pasmo",
       "category": "expense",
@@ -39,6 +31,14 @@
       "amount": 140,
       "memo": "飲み物",
       "createdAt": 1792897200000
+    },
+    {
+      "id": "uwidl3tyi",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 210,
+      "memo": "品川シーサイド~大井町",
+      "createdAt": 1792033200000
     },
     {
       "id": "tuu10ux4n",
