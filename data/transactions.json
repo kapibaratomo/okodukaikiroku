@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "6uqv6i2ye",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 358,
+      "memo": "青物横丁~大門",
+      "createdAt": 1793502000000
+    },
+    {
       "id": "8ariyefg1",
       "type": "pasmo",
       "category": "expense",
