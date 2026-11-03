@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "4plzqah4k",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 200,
+      "memo": "駐輪場",
+      "createdAt": 1793674800000
+    },
+    {
       "id": "tlvo1jp9x",
       "type": "pasmo",
       "category": "expense",
@@ -23,14 +31,6 @@
       "amount": 358,
       "memo": "大門~青物横丁",
       "createdAt": 1793502000000
-    },
-    {
-      "id": "4plzqah4k",
-      "type": "pasmo",
-      "category": "expense",
-      "amount": 200,
-      "memo": "駐輪場",
-      "createdAt": 1793415600000
     },
     {
       "id": "k7pzbt1a2",
