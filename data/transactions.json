@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "kndkiba01",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 209,
+      "memo": "代々木~秋葉原",
+      "createdAt": 1793674800000
+    },
+    {
       "id": "6y21f1gms",
       "type": "pasmo",
       "category": "expense",
