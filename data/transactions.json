@@ -1,6 +1,14 @@
 {
   "transactions": [
     {
+      "id": "oo1iukngl",
+      "type": "pasmo",
+      "category": "expense",
+      "amount": 178,
+      "memo": "門前仲町~光が丘",
+      "createdAt": 1793847600000
+    },
+    {
       "id": "pt1klbwkn",
       "type": "pasmo",
       "category": "expense",
